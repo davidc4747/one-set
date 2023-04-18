@@ -1,0 +1,83 @@
+/* ======================== *\
+    #Variables
+\* ======================== */
+
+:root {
+    /* Colors */
+    --gold: #785a28;
+    --black: #09141b;
+    --white: #fbfbfb;
+    --grey: #868479;
+
+    /* Type Scaling */
+    --header1: 1.8rem;
+    --header2: 1.6rem;
+    --header3: 1.4rem;
+    --header4: 1.2rem;
+    --header5: 1.1rem;
+    --paragraph: 1rem;
+    --helperText: 0.8rem;
+    --copyrightText: 0.7rem;
+
+    /* Theme */
+    --primaryColor: var(--gold);
+    --secondaryColor: var(--grey);
+    --background: var(--black);
+    --textColor: var(--grey);
+    --textColorInverted: black;
+}
+
+/*=======================*\
+    #General
+\*=======================*/
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+/* ======================== *\
+    #Headers
+\* ======================== */
+
+h1 {
+    font-size: var(--header1);
+}
+h2 {
+    font-size: var(--header2);
+}
+h3 {
+    font-size: var(--header3);
+}
+h4 {
+    font-size: var(--header4);
+}
+h5 {
+    font-size: var(--header5);
+}
+
+/* ======================== *\
+    #Form
+\* ======================== */
+
+button {
+}
+input {
+}
+textarea {
+}
