@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Exercise } from "../../utils/types";
 
 /* ======================== *\
     #App Model
@@ -23,16 +24,6 @@ const initalModel: Model = {
     currExercise: null,
     exerciseHistory: [],
 };
-
-/* ======================== *\
-    #Exercies
-\* ======================== */
-
-interface Exercise {
-    name: string;
-    sets: number;
-    weight: number;
-}
 
 /* ======================== *\
     #Hook
@@ -122,12 +113,5 @@ export function useAppModel() {
             selectExercise() {},
             shuffleExercise() {},
         } as Actions,
-    };
-}
-
-function increment(currExercise: Exercise) {
-    return {
-        ...currExercise,
-        weight: currExercise.weight + 5,
     };
 }
