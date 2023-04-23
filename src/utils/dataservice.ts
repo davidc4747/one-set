@@ -24,6 +24,23 @@ export async function get(key: string): Promise<any> {
         };
     });
 }
+
+export async function getAll(): Promise<any> {
+    if (!db) {
+        db = await openDB();
+    }
+    const store = db.transaction(DATA_STORE).objectStore(DATA_STORE);
+    const req = store.getAll();
+    return new Promise(function (resolve, reject) {
+        req.onsuccess = () => {
+            resolve(req.result);
+        };
+        req.onerror = () => {
+            reject(`Error getting All entries`);
+        };
+    });
+}
+
 export async function add(data: Exercise): Promise<any> {
     if (!db) {
         db = await openDB();
@@ -41,6 +58,7 @@ export async function add(data: Exercise): Promise<any> {
         };
     });
 }
+
 export async function put(key: string, data: Exercise): Promise<any> {
     if (!db) {
         db = await openDB();
@@ -58,6 +76,7 @@ export async function put(key: string, data: Exercise): Promise<any> {
         };
     });
 }
+
 export async function remove(key: string): Promise<void> {
     if (!db) {
         db = await openDB();
@@ -72,6 +91,24 @@ export async function remove(key: string): Promise<void> {
         };
         req.onerror = () => {
             reject("Error deleteing data:");
+        };
+    });
+}
+
+export async function clear(): Promise<any> {
+    if (!db) {
+        db = await openDB();
+    }
+    const store = db
+        .transaction(DATA_STORE, "readwrite")
+        .objectStore(DATA_STORE);
+    const req = store.clear();
+    return new Promise(function (resolve, reject) {
+        req.onsuccess = () => {
+            resolve(req.result ?? []);
+        };
+        req.onerror = () => {
+            reject(`Error getting All entries`);
         };
     });
 }
