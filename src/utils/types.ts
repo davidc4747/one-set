@@ -1,5 +1,6 @@
 export interface Exercise {
     name: string;
-    sets: number;
+    set: number;
     weight: number;
+    datetime: Date;
 }

@@ -5,7 +5,8 @@ import { get, getAll, add, put, remove, clear } from "./dataservice";
 test("Should change the data", async function () {
     const testExercise = {
         name: "Testing",
-        sets: 2,
+        datetime: new Date(),
+        set: 2,
         weight: 100,
     };
 
@@ -20,7 +21,8 @@ test("Should change the data", async function () {
     // Update
     const newExercise = {
         name: "Change",
-        sets: 8,
+        datetime: new Date(),
+        set: 8,
         weight: 200,
     };
     const putid = await put(key, newExercise);
@@ -38,17 +40,20 @@ test("Should get and clear the full datastore", async function () {
     const testExerciseList = [
         {
             name: "Squat",
-            sets: 2,
+            datetime: new Date(),
+            set: 2,
             weight: 100,
         },
         {
             name: "Deadlift",
-            sets: 2,
+            datetime: new Date(),
+            set: 2,
             weight: 100,
         },
         {
             name: "Row",
-            sets: 2,
+            datetime: new Date(),
+            set: 2,
             weight: 100,
         },
     ];

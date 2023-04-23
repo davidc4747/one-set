@@ -9,7 +9,7 @@ const DATA_STORE = "exerciseHistory";
 
 let db: IDBDatabase | null = null;
 
-export async function get(key: string): Promise<any> {
+export async function get(key: IDBValidKey): Promise<Exercise> {
     if (!db) {
         db = await openDB();
     }
@@ -25,7 +25,7 @@ export async function get(key: string): Promise<any> {
     });
 }
 
-export async function getAll(): Promise<any> {
+export async function getAll(): Promise<Exercise[]> {
     if (!db) {
         db = await openDB();
     }
@@ -41,7 +41,7 @@ export async function getAll(): Promise<any> {
     });
 }
 
-export async function add(data: Exercise): Promise<any> {
+export async function add(data: Exercise): Promise<IDBValidKey> {
     if (!db) {
         db = await openDB();
     }
@@ -59,7 +59,10 @@ export async function add(data: Exercise): Promise<any> {
     });
 }
 
-export async function put(key: string, data: Exercise): Promise<any> {
+export async function put(
+    key: IDBValidKey,
+    data: Exercise
+): Promise<IDBValidKey> {
     if (!db) {
         db = await openDB();
     }
@@ -77,7 +80,7 @@ export async function put(key: string, data: Exercise): Promise<any> {
     });
 }
 
-export async function remove(key: string): Promise<void> {
+export async function remove(key: IDBValidKey): Promise<void> {
     if (!db) {
         db = await openDB();
     }
@@ -95,7 +98,7 @@ export async function remove(key: string): Promise<void> {
     });
 }
 
-export async function clear(): Promise<any> {
+export async function clear(): Promise<void> {
     if (!db) {
         db = await openDB();
     }
@@ -105,7 +108,7 @@ export async function clear(): Promise<any> {
     const req = store.clear();
     return new Promise(function (resolve, reject) {
         req.onsuccess = () => {
-            resolve(req.result ?? []);
+            resolve();
         };
         req.onerror = () => {
             reject(`Error getting All entries`);
