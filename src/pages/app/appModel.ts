@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Exercise } from "../../utils/types";
+import * as dataservice from "../../utils/dataservice";
 
 /* ======================== *\
     #App Model
@@ -17,6 +18,7 @@ export interface Actions {
     decreaseWeight: () => void;
     selectExercise: () => void;
     shuffleExercise: () => void;
+    clearExercise: () => void;
 }
 
 const initalModel: Model = {
@@ -38,34 +40,15 @@ export function useAppModel() {
 
     useEffect(
         function () {
-            // Recomend an Exercise based on history
-            setModel((prevModel) => ({
-                ...prevModel,
-                currExercise: {
-                    name: "Squat",
-                    sets: 0,
-                    weight: 50,
-                },
-
-                // TODO: Should load exerciseHistory from indexDB
-                exerciseHistory: [
-                    {
-                        name: "Testing",
-                        sets: 0,
-                        weight: 100,
-                    },
-                    {
-                        name: "Temp",
-                        sets: 0,
-                        weight: 100,
-                    },
-                    {
-                        name: "Soemthing",
-                        sets: 0,
-                        weight: 100,
-                    },
-                ],
-            }));
+            // Pull Exercie History from DB
+            dataservice.getAll().then(function (history) {
+                // Recomend an Exercise based on history
+                setModel((prevModel) => ({
+                    ...prevModel,
+                    currExercise: selectNextExercise(history),
+                    exerciseHistory: history,
+                }));
+            });
         },
         [setModel]
     );
@@ -101,17 +84,55 @@ export function useAppModel() {
             },
             completeSet() {
                 if (model.currExercise) {
+                    const updatedExercise = {
+                        ...model.currExercise,
+                        set: model.currExercise.set + 1,
+                        datetime: new Date(),
+                    };
+
+                    // Update Model
                     setModel({
                         ...model,
-                        currExercise: {
-                            ...model.currExercise,
-                            sets: model.currExercise.sets + 1,
-                        },
+
+                        // Should the current exercise change?
+                        currExercise:
+                            updatedExercise.set <= 9
+                                ? updatedExercise
+                                : selectNextExercise(model.exerciseHistory),
+
+                        // Add to exercise history
+                        exerciseHistory: [
+                            updatedExercise,
+                            ...model.exerciseHistory,
+                        ],
                     });
+
+                    // Update Exercie History in DB
+                    dataservice.add(updatedExercise);
                 }
             },
             selectExercise() {},
             shuffleExercise() {},
+            clearExercise() {
+                // Update Model
+                setModel({
+                    ...model,
+                    currExercise: selectNextExercise(model.exerciseHistory),
+                    exerciseHistory: [],
+                });
+
+                // Update Exercie History in DB
+                dataservice.clear();
+            },
         } as Actions,
+    };
+}
+
+function selectNextExercise(exerciseHistory: Exercise[]): Exercise {
+    return {
+        name: "Testing",
+        datetime: new Date(),
+        set: 0,
+        weight: 100,
     };
 }

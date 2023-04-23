@@ -32,7 +32,7 @@ export default function Exercise(props: PropTypes): React.ReactElement {
                     >
                         +
                     </button>
-                    {currExercise?.weight}x{currExercise?.sets}
+                    {currExercise?.weight}x{currExercise?.set}
                     <button onClick={() => actions.decreaseWeight()}>-</button>
                 </div>
                 <button>
@@ -46,7 +46,7 @@ export default function Exercise(props: PropTypes): React.ReactElement {
             <ul className={historyList}>
                 {exerciseHistory.map((exercise, index) => (
                     <li key={index} className={historyItem}>
-                        {exercise.name} {exercise.weight}x{exercise.sets}
+                        {exercise.name} {exercise.weight}x{exercise.set}
                     </li>
                 ))}
 
