@@ -33,3 +33,8 @@
 .historyItem {
     /* background-color: rebeccapurple; */
 }
+
+.viewfullhistory {
+    display: block;
+    text-align: center;
+}

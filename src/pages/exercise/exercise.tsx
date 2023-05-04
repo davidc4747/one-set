@@ -4,6 +4,7 @@ import {
     right,
     historyList,
     historyItem,
+    viewfullhistory,
 } from "./exercise.module.css";
 import { Model, Actions } from "../app/appModel";
 import { Link } from "react-router-dom";
@@ -24,36 +25,59 @@ export default function Exercise(props: PropTypes): React.ReactElement {
         <>
             <header className={exerciseHeader}>
                 <div className={currentExercise}>
-                    <button onClick={() => actions.completeSet()}>☑️</button>
-                    <div>{currExercise?.name}</div>
+                    <button
+                        aria-label={`Complete ${
+                            currExercise?.name ?? "Exercise"
+                        } Set`}
+                        data-testid="complete-set"
+                        onClick={() => actions.completeSet()}
+                    >
+                        ☑️
+                    </button>
+                    <span data-testid="exercise">{currExercise?.name}</span>
                     <button
                         className={right}
+                        aria-label={`Increase ${
+                            currExercise?.name ?? "Exercise"
+                        } Weight`}
+                        data-testid="increase"
                         onClick={() => actions.increaseWeight()}
                     >
                         +
                     </button>
-                    {currExercise?.weight}x{currExercise?.set}
-                    <button onClick={() => actions.decreaseWeight()}>-</button>
+                    <span data-testid="weight">{currExercise?.weight}lbs</span>
+                    <button
+                        aria-label={`Decrease ${
+                            currExercise?.name ?? "Exercise"
+                        } Weight`}
+                        data-testid="decrease"
+                        onClick={() => actions.decreaseWeight()}
+                    >
+                        -
+                    </button>
                 </div>
-                <button>
-                    <Link to="/select">Select</Link>
-                </button>
-                <button onClick={() => actions.shuffleExercise()}>
+
+                <Link aria-label="Select Exercise" to="/select">
+                    Select
+                </Link>
+                <button
+                    aria-label="Select Random Exercise"
+                    onClick={() => actions.shuffleExercise()}
+                >
                     Shuffle
                 </button>
             </header>
 
-            <ul className={historyList}>
+            <ul className={historyList} data-testid="exercise-history">
                 {exerciseHistory.map((exercise, index) => (
                     <li key={index} className={historyItem}>
-                        {exercise.name} {exercise.weight}x{exercise.set}
+                        {exercise.name} {exercise.set}x{exercise.weight}lbs
                     </li>
                 ))}
-
-                <li>
-                    <Link to="/history">See Full Hisotry</Link>
-                </li>
             </ul>
+            <Link className={viewfullhistory} to="/history">
+                See Full History
+            </Link>
         </>
     );
 }

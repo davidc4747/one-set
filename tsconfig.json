@@ -28,6 +28,9 @@
         "noImplicitReturns": true,
         "noImplicitThis": true,
         "noUnusedLocals": true,
-        "noUnusedParameters": true
+        "noUnusedParameters": true,
+
+        /* Cypress-testing-library types */
+        "types": ["cypress", "@testing-library/cypress"]
     }
 }
