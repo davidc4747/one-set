@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
-import { Exercise, ALL_EXERCISES } from "../../utils/types";
+import {
+    Exercise,
+    ExerciseType,
+    ALL_EXERCISES,
+    EXERCISE_DEFAULT,
+} from "../../utils/types";
 import * as dataservice from "../../utils/dataservice";
 
 /* ======================== *\
@@ -45,7 +50,7 @@ export function useAppModel() {
                 // Recomend an Exercise based on history
                 setModel({
                     ...initalModel,
-                    currExercise: selectNextExercise(history),
+                    currExercise: getAvailableExercies(history)[0],
                     exerciseHistory: history,
                 });
             });
@@ -86,7 +91,6 @@ export function useAppModel() {
                 if (model.currExercise) {
                     const updatedExercise = {
                         ...model.currExercise,
-                        set: model.currExercise.set + 1,
                         datetime: new Date(),
                     };
 
@@ -100,10 +104,7 @@ export function useAppModel() {
                         ...model,
 
                         // Should the current exercise change?
-                        currExercise:
-                            updatedExercise.set < 9
-                                ? updatedExercise
-                                : selectNextExercise(updatedHistory),
+                        currExercise: getAvailableExercies(updatedHistory)[0],
 
                         // Add to exercise history
                         exerciseHistory: updatedHistory,
@@ -130,11 +131,69 @@ export function useAppModel() {
     };
 }
 
-function selectNextExercise(exerciseHistory: Exercise[]): Exercise {
-    return {
-        name: ALL_EXERCISES[Math.floor(Math.random() * ALL_EXERCISES.length)],
-        datetime: new Date(),
-        set: 0,
-        weight: 100,
-    };
+export function getAvailableExercies(
+    fullExerciseHistory: Exercise[]
+): Exercise[] {
+    const availableExercies = getAvailableExercieTypes(fullExerciseHistory);
+    return availableExercies.map(function (exerciseName: ExerciseType) {
+        // TODO: Do this with an index? indexedDB?
+        const exerciseHistory = fullExerciseHistory
+            .filter((ex) => ex.name === exerciseName)
+            .sort((a, b) => a.datetime - b.datetime);
+        const mostRecent = exerciseHistory.findLast(
+            (ex) => ex.name === exerciseName
+        );
+        const setsAtCurrentWeight = exerciseHistory.filter(
+            (ex) => ex.weight === mostRecent?.weight
+        ).length;
+
+        if (mostRecent && setsAtCurrentWeight >= 9) {
+            // If you've done more than 9 set, Bump the weight
+            return {
+                name: exerciseName,
+                datetime: new Date(),
+                set: 1,
+                weight: mostRecent.weight + 5,
+            };
+        } else if (mostRecent && setsAtCurrentWeight < 9) {
+            // Less than 9 set, Keep doing the same Weight
+            return {
+                name: exerciseName,
+                datetime: new Date(),
+                set: mostRecent.set + 1,
+                weight: mostRecent.weight,
+            };
+        } else {
+            // There's no history Data in the DB yet, use Defaults
+            return EXERCISE_DEFAULT[exerciseName] as Exercise;
+        }
+    });
+}
+
+function getAvailableExercieTypes(fullExerciseHistory: Exercise[]) {
+    const exerciseOrder = ALL_EXERCISES.slice(); // Clone the Array
+    const numOfSets = ALL_EXERCISES.reduce(function (acc, exercise) {
+        return {
+            ...acc,
+            [exercise]: 0,
+        };
+    }, {});
+    let availableExercies = new Set<ExerciseType>(exerciseOrder);
+    fullExerciseHistory
+        .slice()
+        .sort((a, b) => a.datetime - b.datetime)
+        .forEach(function (exercise) {
+            numOfSets[exercise.name]++;
+
+            // Exercises become Unavailable after 3 Completed Sets
+            if (numOfSets[exercise.name] >= 3) {
+                availableExercies.delete(exercise.name);
+                numOfSets[exercise.name] = 0;
+            }
+            if (availableExercies.size === 0) {
+                // Reset the Deck
+                availableExercies = new Set<ExerciseType>(exerciseOrder);
+            }
+        });
+    return Array.from(availableExercies);
 }
