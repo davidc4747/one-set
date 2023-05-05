@@ -1,11 +1,11 @@
-import { clear, add } from "../../src/utils/dataservice";
+import { clearHistory } from "../../src/utils/historyService";
 
 beforeEach(function () {
     cy.visit("/");
 
     // NOTE: This IndexedDB is specific to the Cypress Browser
     //      so clearing the full DB won't have any effect any user's actual data
-    clear();
+    clearHistory();
 
     // Wait for React to finish Rendering
     cy.findAllByTestId("exercise").contains(/\w/);

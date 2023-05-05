@@ -1,19 +1,14 @@
-import { Exercise } from "./types";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 /* ======================== *\
     #Data Service
 \* ======================== */
 
-const DATABASE = "one-set";
-const DATA_STORE = "exerciseHistory";
-
 let db: IDBDatabase | null = null;
+type Store = "exerciseHistory";
 
-export async function get(key: IDBValidKey): Promise<Exercise> {
-    if (!db) {
-        db = await openDB();
-    }
-    const store = db.transaction(DATA_STORE).objectStore(DATA_STORE);
+export async function get(storeName: Store, key: IDBValidKey): Promise<any> {
+    const store = await getDBStore(storeName);
     const req = store.get(key);
     return new Promise(function (resolve, reject) {
         req.onsuccess = () => {
@@ -25,11 +20,8 @@ export async function get(key: IDBValidKey): Promise<Exercise> {
     });
 }
 
-export async function getAll(): Promise<Exercise[]> {
-    if (!db) {
-        db = await openDB();
-    }
-    const store = db.transaction(DATA_STORE).objectStore(DATA_STORE);
+export async function getAll(storeName: Store): Promise<any[]> {
+    const store = await getDBStore(storeName);
     const req = store.getAll();
     return new Promise(function (resolve, reject) {
         req.onsuccess = () => {
@@ -41,13 +33,8 @@ export async function getAll(): Promise<Exercise[]> {
     });
 }
 
-export async function add(data: Exercise): Promise<IDBValidKey> {
-    if (!db) {
-        db = await openDB();
-    }
-    const store = db
-        .transaction(DATA_STORE, "readwrite")
-        .objectStore(DATA_STORE);
+export async function add(storeName: Store, data: any): Promise<IDBValidKey> {
+    const store = await getDBStore(storeName, "readwrite");
     const req = store.add(data);
     return new Promise(function (resolve, reject) {
         req.onsuccess = () => {
@@ -60,15 +47,11 @@ export async function add(data: Exercise): Promise<IDBValidKey> {
 }
 
 export async function put(
+    storeName: Store,
     key: IDBValidKey,
-    data: Exercise
+    data: any
 ): Promise<IDBValidKey> {
-    if (!db) {
-        db = await openDB();
-    }
-    const store = db
-        .transaction(DATA_STORE, "readwrite")
-        .objectStore(DATA_STORE);
+    const store = await getDBStore(storeName, "readwrite");
     const req = store.put(data, key);
     return new Promise(function (resolve, reject) {
         req.onsuccess = () => {
@@ -80,31 +63,24 @@ export async function put(
     });
 }
 
-export async function remove(key: IDBValidKey): Promise<void> {
-    if (!db) {
-        db = await openDB();
-    }
-    const store = db
-        .transaction(DATA_STORE, "readwrite")
-        .objectStore(DATA_STORE);
+export async function remove(
+    storeName: Store,
+    key: IDBValidKey
+): Promise<void> {
+    const store = await getDBStore(storeName, "readwrite");
     const req = store.delete(key);
     return new Promise(function (resolve, reject) {
         req.onsuccess = () => {
             resolve();
         };
         req.onerror = () => {
-            reject("Error deleteing data:");
+            reject("Error deleting data:");
         };
     });
 }
 
-export async function clear(): Promise<void> {
-    if (!db) {
-        db = await openDB();
-    }
-    const store = db
-        .transaction(DATA_STORE, "readwrite")
-        .objectStore(DATA_STORE);
+export async function clear(storeName: Store): Promise<void> {
+    const store = await getDBStore(storeName, "readwrite");
     const req = store.clear();
     return new Promise(function (resolve, reject) {
         req.onsuccess = () => {
@@ -120,7 +96,8 @@ export async function clear(): Promise<void> {
     #Helpers
 \* ======================== */
 
-function openDB(): Promise<IDBDatabase> {
+function openDB(storeName: Store): Promise<IDBDatabase> {
+    const DATABASE = "one-set";
     const requestOpenDB = indexedDB.open(DATABASE);
 
     return new Promise(function (resolve, reject) {
@@ -134,7 +111,17 @@ function openDB(): Promise<IDBDatabase> {
 
         requestOpenDB.onupgradeneeded = function () {
             const db = requestOpenDB.result;
-            db.createObjectStore(DATA_STORE, { autoIncrement: true });
+            db.createObjectStore(storeName, { autoIncrement: true });
         };
     });
+}
+
+async function getDBStore(
+    storeName: Store,
+    mode: IDBTransactionMode = "readonly"
+) {
+    if (!db) {
+        db = await openDB(storeName);
+    }
+    return db.transaction(storeName, mode).objectStore(storeName);
 }

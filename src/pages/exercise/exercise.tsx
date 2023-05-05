@@ -30,7 +30,7 @@ export default function Exercise(props: PropTypes): React.ReactElement {
                             currExercise?.name ?? "Exercise"
                         } Set`}
                         data-testid="complete-set"
-                        onClick={() => actions.completeSet()}
+                        onClick={async () => await actions.completeSet()}
                     >
                         ☑️
                     </button>
