@@ -62,7 +62,8 @@ export default function Exercise(props: PropTypes): React.ReactElement {
                 </Link>
                 <button
                     aria-label="Select Random Exercise"
-                    onClick={() => actions.shuffleExercise()}
+                    data-testid="shuffle"
+                    onClick={async () => await actions.shuffleExercise()}
                 >
                     Shuffle
                 </button>

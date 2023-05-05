@@ -70,10 +70,17 @@ export async function getNextExercise(): Promise<Exercise> {
     return await getNextExerciseByName(exName);
 }
 
-export async function getRandomExercise(): Promise<Exercise> {
+export async function getRandomExercise(
+    exclude: ExerciseType[] = []
+): Promise<Exercise | null> {
     const available = await getAvailableExercieTypes();
-    const exName = available[available.length * Math.random()];
-    return getNextExerciseByName(exName);
+    const exercises = available.filter((name) => !exclude.includes(name));
+    if (exercises.length > 0) {
+        const randomIndex = Math.floor(exercises.length * Math.random());
+        return getNextExerciseByName(exercises[randomIndex]);
+    } else {
+        return null;
+    }
 }
 
 export async function getAllAvailableExercies(): Promise<Exercise[]> {

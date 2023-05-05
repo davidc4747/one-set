@@ -20,9 +20,8 @@ export interface Actions {
     completeSet: () => void;
     increaseWeight: () => void;
     decreaseWeight: () => void;
-    selectExercise: () => void;
+    selectExercise: (exercise: Exercise) => void;
     shuffleExercise: () => void;
-    clearHistory: () => void;
 }
 
 const initalModel: Model = {
@@ -110,18 +109,25 @@ export function useAppModel() {
                     });
                 }
             },
-            selectExercise() {},
-            shuffleExercise() {},
-            clearHistory() {
-                // Update Model
+            selectExercise(exercise: Exercise) {
                 setModel({
                     ...model,
-                    currExercise: selectNextExercise(model.exerciseHistory),
-                    exerciseHistory: [],
+                    currExercise: exercise,
                 });
+            },
+            async shuffleExercise() {
+                const randomExercise = await getRandomExercise(
+                    // randomly select and exercise that's not the same as the current one
+                    model.currExercise ? [model.currExercise.name] : []
+                );
 
-                // Update Exercie History in DB
-                dataservice.clear();
+                // If it can't find an exersice to select, do nothing.
+                if (randomExercise) {
+                    setModel({
+                        ...model,
+                        currExercise: randomExercise,
+                    });
+                }
             },
         } as Actions,
     };
