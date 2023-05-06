@@ -1,0 +1,18 @@
+/* ===================== *\
+    # Select Exercise
+\* ===================== */
+
+.selectExercise {
+    padding: 1rem;
+}
+
+.exerciseList {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.exerciseItem {
+    width: calc(33% - 1rem);
+}

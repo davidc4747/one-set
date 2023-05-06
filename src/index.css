@@ -76,6 +76,7 @@ h5 {
 \* ======================== */
 
 button {
+    cursor: pointer;
 }
 input {
 }

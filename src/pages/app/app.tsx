@@ -1,7 +1,8 @@
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import { app } from "./app.module.css";
 import { useAppModel } from "./appModel";
 import Exercise from "../exercise/exercise";
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import SelectExercise from "../selectExercise/selectExercise";
 
 /* ===================== *\
     # App
@@ -20,10 +21,7 @@ export default function App(): React.ReactElement {
                     <Route
                         path="/select"
                         element={
-                            <h2>
-                                <Link to="/">Home</Link>
-                                <div>Select Exercise</div>
-                            </h2>
+                            <SelectExercise select={actions.selectExercise} />
                         }
                     />
                     <Route
