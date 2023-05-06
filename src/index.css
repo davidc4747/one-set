@@ -1,84 +1,71 @@
 /* ======================== *\
-    #Variables
+    #Links
 \* ======================== */
 
-:root {
-    /* Colors */
-    --gold: #785a28;
-    --black: #09141b;
-    --white: #fbfbfb;
-    --grey: #868479;
-
-    /* Type Scaling */
-    --header1: 1.8rem;
-    --header2: 1.6rem;
-    --header3: 1.4rem;
-    --header4: 1.2rem;
-    --header5: 1.1rem;
-    --paragraph: 1rem;
-    --helperText: 0.8rem;
-    --copyrightText: 0.7rem;
-
-    /* Theme */
-    --primaryColor: var(--gold);
-    --secondaryColor: var(--grey);
-    --background: var(--black);
-    --textColor: var(--grey);
-    --textColorInverted: black;
+.link {
+    @apply text-white underline transition ease-out duration-200;
 }
-
-/*=======================*\
-    #General
-\*=======================*/
-
-* {
-    box-sizing: border-box;
-}
-
-html,
-body {
-    margin: 0;
-    padding: 0;
-}
-
-body {
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-}
-
-ul {
-    margin: 0;
-    padding: 0;
-    list-style-type: none;
+.link:hover {
+    @apply text-gray-400;
 }
 
 /* ======================== *\
-    #Headers
+    #Form Components
 \* ======================== */
+
+.btn {
+    @apply bg-primary-500 
+        text-gray-200 
+        text-center
+        shadow
+        px-lg 
+        py-xs 
+        rounded;
+    @apply transition 
+        ease-out
+        duration-200;
+}
+.btn:hover {
+    @apply bg-primary-900 text-white;
+}
+
+/* ======================== *\
+    #Tailwind
+\* ======================== */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ======================== *\
+    #Base Elements 
+\* ======================== */
+
+body {
+    @apply font-sans
+        bg-background
+        text-white;
+}
 
 h1 {
-    font-size: var(--header1);
+    font-size: 1.8rem;
 }
 h2 {
-    font-size: var(--header2);
+    font-size: 1.6rem;
 }
 h3 {
-    font-size: var(--header3);
+    font-size: 1.4rem;
 }
 h4 {
-    font-size: var(--header4);
+    font-size: 1.2rem;
 }
 h5 {
-    font-size: var(--header5);
+    font-size: 1.1rem;
 }
-
-/* ======================== *\
-    #Form
-\* ======================== */
+h6 {
+    font-size: 1rem;
+}
 
 button {
-    cursor: pointer;
-}
-input {
-}
-textarea {
+    @apply btn;
 }

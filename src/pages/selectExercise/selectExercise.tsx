@@ -1,9 +1,4 @@
 import { Link } from "react-router-dom";
-import {
-    selectExercise,
-    exerciseList,
-    exerciseItem,
-} from "./selectExercise.module.css";
 import { Exercise, getAllAvailableExercies } from "../../utils/exerciseService";
 import { useEffect, useState } from "react";
 
@@ -29,25 +24,23 @@ export default function SelectExercise(props: PropTypes): React.ReactElement {
     );
 
     return (
-        <div className={selectExercise}>
-            <h2>
-                <Link to="/">Go Back</Link>
-            </h2>
-            <h2>Select Exercise</h2>
+        <main className="flex flex-col gap-xl p-lg max-w-lg mx-auto text-center">
+            <Link to="/">Cancel</Link>
+            <h2 className="font-bold">Available Exercises</h2>
 
-            <div className={exerciseList}>
+            <div className="flex flex-wrap justify-center gap-lg">
                 {available.map((exercise) => (
-                    <button
+                    <Link
+                        to="/"
                         key={exercise.name}
                         onClick={() => select(exercise)}
-                        className={exerciseItem}
+                        className="btn p-lg w-[calc(33%-1rem)] hover:scale-105"
                     >
-                        <h5>{exercise.name}</h5>
-                        <h5>{exercise.weight}</h5>
-                        {/* <div>{JSON.stringify(exercise)}</div> */}
-                    </button>
+                        <h5 className="text-lg">{exercise.name}</h5>
+                        <h5 className="text-md mt-md">{exercise.weight}lbs</h5>
+                    </Link>
                 ))}
             </div>
-        </div>
+        </main>
     );
 }

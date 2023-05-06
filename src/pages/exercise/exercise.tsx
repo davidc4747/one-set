@@ -1,12 +1,4 @@
-import {
-    exerciseHeader,
-    currentExercise,
-    right,
-    historyList,
-    historyItem,
-    viewfullhistory,
-} from "./exercise.module.css";
-import { Model, Actions } from "../app/appModel";
+import { Model, Actions } from "../app/useAppModel";
 import { Link } from "react-router-dom";
 
 /* ===================== *\
@@ -23,8 +15,8 @@ export default function Exercise(props: PropTypes): React.ReactElement {
     const { currExercise, exerciseHistory } = model;
     return (
         <>
-            <header className={exerciseHeader}>
-                <div className={currentExercise}>
+            <header className="p-lg grid grid-cols-2 grid-row-2 gap-md">
+                <div className="col-span-2 flex gap-md items-center">
                     <button
                         aria-label={`Complete ${
                             currExercise?.name ?? "Exercise"
@@ -36,7 +28,7 @@ export default function Exercise(props: PropTypes): React.ReactElement {
                     </button>
                     <span data-testid="exercise">{currExercise?.name}</span>
                     <button
-                        className={right}
+                        className="ml-auto"
                         aria-label={`Increase ${
                             currExercise?.name ?? "Exercise"
                         } Weight`}
@@ -57,7 +49,7 @@ export default function Exercise(props: PropTypes): React.ReactElement {
                     </button>
                 </div>
 
-                <Link aria-label="Select Exercise" to="/select">
+                <Link aria-label="Select Exercise" to="/select" className="btn">
                     Select
                 </Link>
                 <button
@@ -69,14 +61,14 @@ export default function Exercise(props: PropTypes): React.ReactElement {
                 </button>
             </header>
 
-            <ul className={historyList} data-testid="exercise-history">
+            <ul className="text-center" data-testid="exercise-history">
                 {exerciseHistory.map((exercise, index) => (
-                    <li key={index} className={historyItem}>
+                    <li key={index}>
                         {exercise.name} {exercise.set}x{exercise.weight}lbs
                     </li>
                 ))}
             </ul>
-            <Link className={viewfullhistory} to="/history">
+            <Link className="link block text-center" to="/history">
                 See Full History
             </Link>
         </>
