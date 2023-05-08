@@ -24,7 +24,7 @@ export default function SelectExercise(props: PropTypes): React.ReactElement {
     );
 
     return (
-        <main className="flex flex-col gap-xl p-lg max-w-lg mx-auto text-center">
+        <main className="flex flex-col gap-xl text-center">
             <Link to="/">Cancel</Link>
             <h2 className="font-bold">Available Exercises</h2>
 
@@ -34,10 +34,10 @@ export default function SelectExercise(props: PropTypes): React.ReactElement {
                         to="/"
                         key={exercise.name}
                         onClick={() => select(exercise)}
-                        className="btn p-lg w-[calc(33%-1rem)] hover:scale-105"
+                        className="bg-primary-500 text-gray-200 text-center shadow p-lg rounded w-[calc(33%-1rem)] hover:scale-105"
                     >
                         <h5 className="text-lg">{exercise.name}</h5>
-                        <h5 className="text-md mt-md">{exercise.weight}lbs</h5>
+                        <h5 className="text-md mt-lg">{exercise.weight}lbs</h5>
                     </Link>
                 ))}
             </div>

@@ -61,16 +61,25 @@ export default function Exercise(props: PropTypes): React.ReactElement {
                 </button>
             </header>
 
-            <ul className="text-center" data-testid="exercise-history">
-                {exerciseHistory.map((exercise, index) => (
-                    <li key={index}>
-                        {exercise.name} {exercise.set}x{exercise.weight}lbs
-                    </li>
-                ))}
-            </ul>
-            <Link className="link block text-center" to="/history">
-                See Full History
-            </Link>
+            <div className="mx-lg">
+                <ul data-testid="exercise-history">
+                    {exerciseHistory.map((exercise, index) => (
+                        <li
+                            key={index}
+                            className="bg-primary-500 px-lg py-sm text-gray-400 cursor-default first:rounded-t-lg last:rounded-b-lg flex justify-between hover:bg-primary-900 hover:text-white"
+                        >
+                            <span>{exercise.name}</span>
+                            <span>
+                                {exercise.set}x{exercise.weight}lbs
+                            </span>
+                        </li>
+                    ))}
+                </ul>
+
+                <Link className="btn my-sm" to="/history">
+                    See Full History
+                </Link>
+            </div>
         </>
     );
 }
