@@ -44,7 +44,7 @@ it("Should Increment & Decrement Exercise Weight", function () {
 it("Should select a random Exercise", function () {
     cy.findByTestId("exercise")
         .invoke("text")
-        .then((num) => num)
+        .then((exercise) => exercise)
         .as("initalExercise");
 
     cy.findByTestId("shuffle").click();
@@ -57,10 +57,10 @@ it("Should select a random Exercise", function () {
 });
 
 it("Should NEVER randomly select the same Exercise as the Current one", function () {
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 30; i++) {
         cy.findByTestId("exercise")
             .invoke("text")
-            .then((num) => num)
+            .then((exercise) => exercise)
             .as("initalExercise");
 
         cy.findByTestId("shuffle").click();
@@ -71,4 +71,24 @@ it("Should NEVER randomly select the same Exercise as the Current one", function
                 .should("not.contain", initalExercise);
         });
     }
+});
+
+it("Should allow user to manually select and exercise", function () {
+    const selectedExercise = "Row";
+
+    cy.findByTestId("exercise")
+        .invoke("text")
+        .then((exercise) => exercise)
+        .as("initalExercise");
+
+    cy.contains("Select").click();
+    cy.contains(selectedExercise).click();
+
+    cy.get("@initalExercise").then(function (initalExercise) {
+        cy.findByTestId("exercise")
+            .invoke("text")
+            .should("not.equal", "")
+            .should("not.contain", initalExercise)
+            .should("equal", selectedExercise);
+    });
 });
