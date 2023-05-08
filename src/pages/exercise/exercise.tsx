@@ -15,7 +15,7 @@ export default function Exercise(props: PropTypes): React.ReactElement {
     const { currExercise, exerciseHistory } = model;
     return (
         <>
-            <header className="p-lg grid grid-cols-2 grid-row-2 gap-md">
+            <header className="grid grid-cols-2 grid-row-2 gap-md">
                 <div className="col-span-2 flex gap-md items-center">
                     <button
                         aria-label={`Complete ${
@@ -61,25 +61,23 @@ export default function Exercise(props: PropTypes): React.ReactElement {
                 </button>
             </header>
 
-            <div className="mx-lg">
-                <ul data-testid="exercise-history">
-                    {exerciseHistory.map((exercise, index) => (
-                        <li
-                            key={index}
-                            className="bg-primary-500 px-lg py-sm text-gray-400 cursor-default first:rounded-t-lg last:rounded-b-lg flex justify-between hover:bg-primary-900 hover:text-white"
-                        >
-                            <span>{exercise.name}</span>
-                            <span>
-                                {exercise.set}x{exercise.weight}lbs
-                            </span>
-                        </li>
-                    ))}
-                </ul>
+            <ul data-testid="exercise-history" className="mt-lg">
+                {exerciseHistory.map((exercise, index) => (
+                    <li
+                        key={index}
+                        className="bg-primary-500 px-lg py-sm text-gray-400 cursor-default first:rounded-t-lg last:rounded-b-lg flex justify-between hover:bg-primary-900 hover:text-white"
+                    >
+                        <span>{exercise.name}</span>
+                        <span>
+                            {exercise.set}x{exercise.weight}lbs
+                        </span>
+                    </li>
+                ))}
+            </ul>
 
-                <Link className="btn my-sm" to="/history">
-                    See Full History
-                </Link>
-            </div>
+            <Link className="btn my-sm" to="/history">
+                See Full History
+            </Link>
         </>
     );
 }

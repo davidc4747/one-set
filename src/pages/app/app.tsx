@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import { useAppModel } from "./useAppModel";
 import Exercise from "../exercise/exercise";
 import SelectExercise from "../selectExercise/selectExercise";
+import History from "../history/history";
 
 /* ===================== *\
     # App
@@ -23,10 +24,10 @@ export default function App(): React.ReactElement {
                 <Route
                     path="/history"
                     element={
-                        <main>
-                            <Link to="/">Home</Link>
-                            <div>History</div>
-                        </main>
+                        <History
+                            history={model.exerciseHistory}
+                            clearHistory={actions.clearHistory}
+                        />
                     }
                 />
             </Routes>
