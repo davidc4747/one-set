@@ -1,17 +1,17 @@
 import { clearHistory } from "../../src/utils/historyService";
 
-beforeEach(function () {
+beforeEach(async function () {
     cy.visit("/");
 
     // NOTE: This IndexedDB is specific to the Cypress Browser
     //      so clearing the full DB won't have any effect any user's actual data
-    clearHistory();
+    await clearHistory();
 
     // Wait for React to finish Rendering
     cy.findByTestId("exercise").contains(/\w/);
 });
 
-it("Should Add to completed exercise sets history", () => {
+it("Should Add completed exercises to history", () => {
     cy.findByTestId("complete-set").click();
     cy.findByTestId("exercise-history")
         .children()
@@ -56,7 +56,7 @@ it("Should select a random Exercise", function () {
     });
 });
 
-it("Should NEVER randomly select the same Exercise as the Current one", function () {
+it("Should NEVER randomly select the SAME Exercise as the Current one", function () {
     for (let i = 0; i < 30; i++) {
         cy.findByTestId("exercise")
             .invoke("text")
@@ -73,7 +73,7 @@ it("Should NEVER randomly select the same Exercise as the Current one", function
     }
 });
 
-it("Should allow user to manually select and exercise", function () {
+it("Should allow user to manually select an exercise", function () {
     const selectedExercise = "Row";
 
     cy.findByTestId("exercise")
