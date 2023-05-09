@@ -7,9 +7,13 @@ const HISTORY_STORE = "exerciseHistory";
     #Read
 \* ======================== */
 
-export async function getHistory(): Promise<Exercise[]> {
+export async function getHistory(sortAscending = true): Promise<Exercise[]> {
     const history = await getAll(HISTORY_STORE);
-    return history.sort((a, b) => Number(a.datetime) - Number(b.datetime));
+    if (sortAscending) {
+        return history.sort((a, b) => Number(a.datetime) - Number(b.datetime));
+    } else {
+        return history.sort((a, b) => Number(b.datetime) - Number(a.datetime));
+    }
 }
 
 export async function getHistoryForExercise(
@@ -23,8 +27,16 @@ export async function getHistoryForExercise(
     #Update
 \* ======================== */
 
-export async function addExercise(data: Exercise): Promise<IDBValidKey> {
-    return await add(HISTORY_STORE, data);
+export async function addExercise(
+    data: Exercise | Exercise[]
+): Promise<IDBValidKey> {
+    if (Array.isArray(data)) {
+        return Promise.all(
+            data.map(async (item) => await add(HISTORY_STORE, item))
+        );
+    } else {
+        return await add(HISTORY_STORE, data);
+    }
 }
 
 export async function clearHistory(): Promise<void> {

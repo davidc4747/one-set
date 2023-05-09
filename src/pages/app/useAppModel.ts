@@ -15,7 +15,6 @@ import {
 \* ======================== */
 
 export interface Model {
-    count: number;
     currExercise: Exercise | null;
     exerciseHistory: Exercise[];
 }
@@ -30,7 +29,6 @@ export interface Actions {
 }
 
 const initalModel: Model = {
-    count: 0,
     currExercise: null,
     exerciseHistory: [],
 };
