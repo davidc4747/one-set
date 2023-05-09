@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
-import { getHistory, addExercise } from "../../utils/historyService";
+import {
+    getHistory,
+    addExercise,
+    clearHistory,
+} from "../../utils/historyService";
 import {
     Exercise,
     getNextExercise,
@@ -22,6 +26,7 @@ export interface Actions {
     decreaseWeight: () => void;
     selectExercise: (exercise: Exercise) => void;
     shuffleExercise: () => void;
+    clearHistory: () => void;
 }
 
 const initalModel: Model = {
@@ -87,13 +92,11 @@ export function useAppModel() {
             },
             async completeSet() {
                 if (model.currExercise) {
-                    const updatedExercise = {
+                    // Update Exercie History in DB
+                    await addExercise({
                         ...model.currExercise,
                         datetime: new Date(),
-                    };
-
-                    // Update Exercie History in DB
-                    await addExercise(updatedExercise);
+                    });
 
                     // Update Model
                     setModel({
@@ -102,10 +105,7 @@ export function useAppModel() {
                         currExercise: await getNextExercise(),
 
                         // Add to exercise history
-                        exerciseHistory: [
-                            updatedExercise,
-                            ...model.exerciseHistory,
-                        ],
+                        exerciseHistory: await getHistory(),
                     });
                 }
             },
@@ -129,6 +129,18 @@ export function useAppModel() {
                     });
                 }
             },
-        } as Actions,
+            async clearHistory(): Promise<void> {
+                // Update Exercie History in DB
+                await clearHistory();
+
+                // Update Model
+                setModel({
+                    ...model,
+                    // If history change, the currentExercise does to
+                    currExercise: await getNextExercise(),
+                    exerciseHistory: [],
+                });
+            },
+        },
     };
 }

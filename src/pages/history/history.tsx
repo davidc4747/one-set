@@ -57,7 +57,7 @@ export default function History(props: PropTypes): React.ReactElement {
                 ))}
             </ul>
 
-            {/* <button onClick={clearHistory}>Clear History</button> */}
+            <button onClick={clearHistory}>Clear History</button>
         </main>
     );
 }
