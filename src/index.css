@@ -51,13 +51,15 @@ button {
         shadow
         px-lg 
         py-xs 
-        rounded;
+        rounded
+        border-2
+        border-transparent;
     @apply transition 
         ease-out
         duration-200;
 }
 .btn:hover {
-    @apply bg-primary-900 text-white;
+    @apply bg-primary-900 text-white border-white;
 }
 
 /* ======================== *\

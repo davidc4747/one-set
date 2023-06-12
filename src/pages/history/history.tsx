@@ -40,7 +40,7 @@ export default function History(): React.ReactElement {
 
     return (
         <main className="flex flex-col gap-lg">
-            <Link className="btn float-left" to="/">
+            <Link className="btn self-start" to="/">
                 Go Home
             </Link>
 
@@ -56,7 +56,7 @@ export default function History(): React.ReactElement {
             {/* Display hsitory items */}
             {history.map(([date, exerciseList]) => (
                 <div key={date}>
-                    <h1 className="mt-lg">
+                    <h1 className="mt-md mb-sm">
                         {moment(date).calendar(dateFormat)}
                     </h1>
                     <ul data-testid="history-group">
@@ -64,7 +64,7 @@ export default function History(): React.ReactElement {
                             <li
                                 key={index}
                                 data-testid="history-item"
-                                className="bg-primary-500 text-gray-400 px-lg py-sm  cursor-default first:rounded-t-lg last:rounded-b-lg flex justify-between hover:bg-primary-900 hover:text-white"
+                                className="bg-primary-500 text-gray-400 p-lg text-lg cursor-default first:rounded-t-lg last:rounded-b-lg flex justify-between hover:bg-primary-900 hover:text-white"
                             >
                                 {!moment(exercise.datetime).isSame(
                                     Date.now(),

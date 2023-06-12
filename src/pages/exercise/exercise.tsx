@@ -44,7 +44,7 @@ export default function Exercise(props: PropTypes): React.ReactElement {
     return (
         <>
             <header className="grid grid-cols-2 grid-row-2 gap-md">
-                <div className="col-span-2 flex gap-md items-center">
+                <div className=" bg-primary-500 p-lg text-xl font-bold rounded col-span-2 flex gap-md items-center">
                     <button
                         aria-label={`Complete ${
                             currExercise?.name ?? "Exercise"
@@ -77,10 +77,15 @@ export default function Exercise(props: PropTypes): React.ReactElement {
                     </button>
                 </div>
 
-                <Link aria-label="Select Exercise" to="/select" className="btn">
+                <Link
+                    aria-label="Select Exercise"
+                    to="/select"
+                    className="btn p-lg"
+                >
                     Select
                 </Link>
                 <button
+                    className="p-md"
                     aria-label="Select Random Exercise"
                     data-testid="shuffle"
                     onClick={shuffleExercise}
@@ -93,7 +98,7 @@ export default function Exercise(props: PropTypes): React.ReactElement {
                 {history.map((exercise, index) => (
                     <li
                         key={index}
-                        className="bg-primary-500 px-lg py-sm text-gray-400 cursor-default first:rounded-t-lg last:rounded-b-lg flex justify-between hover:bg-primary-900 hover:text-white"
+                        className="bg-primary-500 text-gray-400 p-lg text-lg cursor-default first:rounded-t-lg last:rounded-b-lg flex justify-between hover:bg-primary-900 hover:text-white"
                     >
                         <span>{exercise.name}</span>
                         <span>
