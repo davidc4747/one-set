@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import moment from "moment";
 import { Link } from "react-router-dom";
 import { Exercise } from "../../utils/exerciseService";
-import { getHistory, clearHistory } from "../../utils/historyService";
+import { getHistoryByDate, clearHistory } from "../../utils/historyService";
 
 /* ===================== *\
     # History
@@ -23,10 +23,13 @@ export default function History(): React.ReactElement {
     };
 
     // Get the history Data from the DB
-    const [history, setHistory] = useState<Exercise[]>([]);
+    const [history, setHistory] = useState<
+        [date: string, exList: Exercise[]][]
+    >([]);
     useEffect(function () {
         (async function init() {
-            setHistory(await getHistory());
+            const historyGroups = await getHistoryByDate();
+            setHistory(Array.from(historyGroups));
         })();
     }, []);
 
@@ -37,34 +40,49 @@ export default function History(): React.ReactElement {
 
     return (
         <main className="flex flex-col gap-lg">
-            <Link to="/">Home</Link>
-            <h1>History</h1>
+            <Link className="btn float-left" to="/">
+                Go Home
+            </Link>
 
-            <ul data-testid="full-history">
-                {history.length === 0 && (
+            {/* Not Found Message */}
+            {history.length === 0 && (
+                <ul data-testid="history-not-found">
                     <li className="bg-primary-500 text-gray-400 px-lg py-sm cursor-default rounded-lg">
                         No Exercises Found :(
                     </li>
-                )}
-                {history.map((exercise, index) => (
-                    <li
-                        key={index}
-                        className="bg-primary-500 text-gray-400 px-lg py-sm  cursor-default first:rounded-t-lg last:rounded-b-lg flex justify-between hover:bg-primary-900 hover:text-white"
-                    >
-                        <span>
-                            {moment(exercise.datetime).calendar(dateFormat)}
-                        </span>
-                        {!moment(exercise.datetime).isSame(
-                            Date.now(),
-                            "month"
-                        ) && <span>{moment(exercise.datetime).fromNow()}</span>}
-                        <span>{exercise.name}</span>
-                        <span>
-                            {exercise.set}x{exercise.weight}lbs
-                        </span>
-                    </li>
-                ))}
-            </ul>
+                </ul>
+            )}
+
+            {/* Display hsitory items */}
+            {history.map(([date, exerciseList]) => (
+                <div key={date}>
+                    <h1 className="mt-lg">
+                        {moment(date).calendar(dateFormat)}
+                    </h1>
+                    <ul data-testid="history-group">
+                        {exerciseList.map((exercise, index) => (
+                            <li
+                                key={index}
+                                data-testid="history-item"
+                                className="bg-primary-500 text-gray-400 px-lg py-sm  cursor-default first:rounded-t-lg last:rounded-b-lg flex justify-between hover:bg-primary-900 hover:text-white"
+                            >
+                                {!moment(exercise.datetime).isSame(
+                                    Date.now(),
+                                    "month"
+                                ) && (
+                                    <span>
+                                        {moment(exercise.datetime).fromNow()}
+                                    </span>
+                                )}
+                                <span>{exercise.name}</span>
+                                <span>
+                                    {exercise.set}x{exercise.weight}lbs
+                                </span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            ))}
 
             <button onClick={handleClear}>Clear History</button>
         </main>

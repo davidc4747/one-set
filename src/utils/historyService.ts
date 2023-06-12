@@ -29,6 +29,27 @@ export async function getHistoryForExercise(
     return history.filter((ex) => ex.name === exerciseName);
 }
 
+/* ------------------------- *\
+    #By Group
+\* ------------------------- */
+
+export async function getHistoryByDate(): Promise<Map<string, Exercise[]>> {
+    const history = await getHistory(false);
+    const groups = new Map<string, Exercise[]>();
+    history.forEach(function (exercise) {
+        const date = moment(exercise.datetime).format("YYYY-MM-DD");
+        if (groups.has(date)) {
+            // Append to the Group
+            const group = groups.get(date);
+            group?.push(exercise);
+        } else {
+            // Start a new Group
+            groups.set(date, [exercise]);
+        }
+    });
+    return groups;
+}
+
 /* ======================== *\
     #Update
 \* ======================== */

@@ -2,15 +2,12 @@ import moment from "moment";
 import { Exercise, EXERCISE_DEFAULT } from "../../src/utils/exerciseService";
 import { addExercise, clearHistory } from "../../src/utils/historyService";
 
-beforeEach(async function () {
+beforeEach(function () {
     cy.visit("/");
 
     // NOTE: This IndexedDB is specific to the Cypress Browser
     //      so clearing the full DB won't have any effect any user's actual data
-    await clearHistory();
-
-    // Wait for React to finish Rendering
-    cy.findByTestId("exercise").contains(/\w/);
+    clearHistory();
 });
 
 it("Should Add completed exercises to history", () => {
@@ -21,6 +18,9 @@ it("Should Add completed exercises to history", () => {
 });
 
 it("Should Increment & Decrement Exercise Weight", function () {
+    // Wait for React to finish Rendering
+    cy.findByTestId("exercise").contains(/\w/);
+
     function getWeightValue() {
         return cy
             .findByTestId("weight")
@@ -44,6 +44,8 @@ it("Should Increment & Decrement Exercise Weight", function () {
 });
 
 it("Should select a random Exercise", function () {
+    // Wait for React to finish Rendering
+    cy.findByTestId("exercise").contains(/\w/);
     cy.findByTestId("exercise")
         .invoke("text")
         .then((exercise) => exercise)
@@ -59,6 +61,9 @@ it("Should select a random Exercise", function () {
 });
 
 it("Should allow user to manually select an exercise", function () {
+    // Wait for React to finish Rendering
+    cy.findByTestId("exercise").contains(/\w/);
+
     const selectedExercise = "Row";
 
     cy.findByTestId("exercise")
@@ -92,9 +97,6 @@ it("Should display the most recent Set at the top", function () {
     ];
     addExercise(history);
 
-    cy.findByTestId("exercise-history")
-        .invoke("text")
-        .should("not.be.undefined");
     cy.findByTestId("exercise-history")
         .children()
         .eq(0)

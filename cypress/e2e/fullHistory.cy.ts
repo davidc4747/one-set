@@ -1,9 +1,5 @@
 import moment from "moment";
-import {
-    EXERCISE_DEFAULT,
-    Exercise,
-    getNextExercise,
-} from "../../src/utils/exerciseService";
+import { EXERCISE_DEFAULT, Exercise } from "../../src/utils/exerciseService";
 import { addExercise, clearHistory } from "../../src/utils/historyService";
 
 /* ======================== *\
@@ -16,11 +12,11 @@ beforeEach(function () {
 });
 
 it("Should Display a message for Empty History", function () {
-    cy.findByTestId("full-history").children().should("have.length", 1);
-    cy.findByTestId("full-history").invoke("text").should("not.be.undefined");
+    cy.findAllByTestId("history-item").should("not.exist");
+    cy.findByTestId("history-not-found").should("exist");
 });
 
-it.skip("Should display full history", async function () {
+it("Should display full history", function () {
     const ex = EXERCISE_DEFAULT["Squat"];
     const history: Exercise[] = [
         { ...ex, datetime: moment().toDate() },
@@ -38,7 +34,8 @@ it.skip("Should display full history", async function () {
         { ...ex, datetime: moment().subtract(1, "year").toDate() },
         { ...ex, datetime: moment().subtract(2, "year").toDate() },
     ];
-    await addExercise(history);
+    addExercise(history);
+    cy.findAllByTestId("history-item").should("have.length", history.length);
 });
 
 it("Should clear exercise history", function () {
@@ -48,11 +45,9 @@ it("Should clear exercise history", function () {
     ];
     addExercise(history);
 
-    cy.findByTestId("full-history")
-        .children()
-        .should("have.length.greaterThan", 1);
+    cy.findAllByTestId("history-item").should("have.length", history.length);
     cy.contains(/clear/gi).click();
-    cy.findByTestId("full-history").children().should("have.length", 1);
+    cy.findAllByTestId("history-item").should("have.length", 0);
 });
 
 it("Should sort history in descending order", function () {
@@ -62,6 +57,7 @@ it("Should sort history in descending order", function () {
             datetime: moment().subtract(2, "day").toDate(),
         },
         { ...EXERCISE_DEFAULT["Squat"], datetime: moment().toDate() },
+        { ...EXERCISE_DEFAULT["Squat"], datetime: moment().toDate() },
         {
             ...EXERCISE_DEFAULT["Row"],
             datetime: moment().subtract(1, "day").toDate(),
@@ -69,13 +65,6 @@ it("Should sort history in descending order", function () {
     ];
     addExercise(history);
 
-    cy.findByTestId("full-history").invoke("text").should("not.be.undefined");
-    cy.findByTestId("full-history")
-        .children()
-        .should("have.length", history.length);
-    cy.findByTestId("full-history")
-        .children()
-        .eq(0)
-        .invoke("text")
-        .should("include", "OHP");
+    cy.findAllByTestId("history-group").should("have.length", 3);
+    cy.findAllByTestId("history-item").should("have.length", history.length);
 });

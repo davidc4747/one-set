@@ -131,19 +131,12 @@ async function getNextExerciseByName(
 
 async function getAvailableExercieTypes() {
     const exerciseOrder = ALL_EXERCISES.slice(); // Clone the Array
-
-    // TODO: I should be initalizing this as 0 inside the next chunk of code.
-    //          There's a way to simplif this, but i can do it NOW. Unless i'm sure I have tests for this funciton
-    //          This isn't a Type problem. this is a code problem
-    const numOfSets: Record<ExerciseType, number> = ALL_EXERCISES.reduce(
-        function (acc, exercise) {
-            return {
-                ...acc,
-                [exercise]: 0,
-            };
-        },
-        {}
-    );
+    const numOfSets = ALL_EXERCISES.reduce(function (acc, exercise) {
+        return {
+            ...acc,
+            [exercise]: 0,
+        };
+    }, {}) as Record<ExerciseType, number>;
     let availableExercies = new Set<ExerciseType>(exerciseOrder);
     const history = await getHistory();
     history.forEach(function (exercise) {
