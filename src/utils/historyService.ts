@@ -19,7 +19,9 @@ export async function getHistory(sortAscending = true): Promise<Exercise[]> {
 
 export async function getHistoryForToday(): Promise<Exercise[]> {
     const history = await getHistory(false);
-    return history.filter((ex) => moment(ex.datetime).isSame(moment(), "day"));
+    return combineDuplicateExercise(
+        history.filter((ex) => moment(ex.datetime).isSame(moment(), "day"))
+    );
 }
 
 export async function getHistoryForExercise(
@@ -38,14 +40,9 @@ export async function getHistoryByDate(): Promise<Map<string, Exercise[]>> {
     const groups = new Map<string, Exercise[]>();
     history.forEach(function (exercise) {
         const date = moment(exercise.datetime).format("YYYY-MM-DD");
-        if (groups.has(date)) {
-            // Append to the Group
-            const group = groups.get(date);
-            group?.push(exercise);
-        } else {
-            // Start a new Group
-            groups.set(date, [exercise]);
-        }
+        const group = groups.get(date) ?? [];
+        group.push(exercise);
+        groups.set(date, combineDuplicateExercise(group));
     });
     return groups;
 }
@@ -68,4 +65,39 @@ export async function addExercise(
 
 export async function clearHistory(): Promise<void> {
     return await clear(HISTORY_STORE);
+}
+
+/* ======================== *\
+    #Helpers
+\* ======================== */
+
+function combineDuplicateExercise(exerciseList: Exercise[]): Exercise[] {
+    const numOfSets = {
+        Squat: 0,
+        OHP: 0,
+        Deadlift: 0,
+        "Bench press": 0,
+        Row: 0,
+        "Calf Raises": 0,
+        "Ab workout": 0,
+    };
+    //  Count the number of Sets
+    exerciseList.forEach(function (exercise) {
+        numOfSets[exercise.name] += exercise.set;
+    });
+    return (
+        exerciseList
+            // Filter out Duplicates
+            .filter(
+                (ex, index) =>
+                    index ===
+                    exerciseList.findIndex(
+                        (innerEx) => innerEx.name === ex.name
+                    )
+            )
+            // Apply the new value
+            .map((ex) => {
+                return { ...ex, set: numOfSets[ex.name] };
+            })
+    );
 }

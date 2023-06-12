@@ -16,6 +16,19 @@ it("Should Display a message for Empty History", function () {
     cy.findByTestId("history-not-found").should("exist");
 });
 
+it("Should group exercise of the same name together", function () {
+    const ex = EXERCISE_DEFAULT["Squat"];
+    const history: Exercise[] = [
+        { ...ex, datetime: moment().toDate() },
+        { ...ex, datetime: moment().toDate() },
+        { ...ex, datetime: moment().toDate() },
+        { ...ex, datetime: moment().toDate() },
+    ];
+    addExercise(history);
+    cy.findAllByTestId("history-item").should("have.length", 1);
+    cy.findAllByTestId("history-item").invoke("text").should("include", 4);
+});
+
 it("Should display full history", function () {
     const ex = EXERCISE_DEFAULT["Squat"];
     const history: Exercise[] = [
@@ -35,7 +48,7 @@ it("Should display full history", function () {
         { ...ex, datetime: moment().subtract(2, "year").toDate() },
     ];
     addExercise(history);
-    cy.findAllByTestId("history-item").should("have.length", history.length);
+    cy.findAllByTestId("history-item").should("have.length", 10);
 });
 
 it("Should clear exercise history", function () {
@@ -56,7 +69,6 @@ it("Should sort history in descending order", function () {
             ...EXERCISE_DEFAULT["OHP"],
             datetime: moment().subtract(2, "day").toDate(),
         },
-        { ...EXERCISE_DEFAULT["Squat"], datetime: moment().toDate() },
         { ...EXERCISE_DEFAULT["Squat"], datetime: moment().toDate() },
         {
             ...EXERCISE_DEFAULT["Row"],
