@@ -9,7 +9,7 @@ import History from "../history/history";
 \* ===================== */
 
 export default function App(): React.ReactElement {
-    const { currExercise, history, ...actions } = useAppModel();
+    const { currExercise, ...actions } = useAppModel();
     return (
         <BrowserRouter>
             <Routes>
@@ -18,8 +18,7 @@ export default function App(): React.ReactElement {
                     element={
                         <Exercise
                             currExercise={currExercise}
-                            history={history}
-                            completeSet={actions.completeSet}
+                            onSetCompleted={actions.completeSet}
                             increaseWeight={actions.increaseWeight}
                             decreaseWeight={actions.decreaseWeight}
                             shuffleExercise={actions.shuffleExercise}
@@ -28,17 +27,11 @@ export default function App(): React.ReactElement {
                 />
                 <Route
                     path="/select"
-                    element={<SelectExercise select={actions.selectExercise} />}
-                />
-                <Route
-                    path="/history"
                     element={
-                        <History
-                            history={history}
-                            clearHistory={actions.clearHistory}
-                        />
+                        <SelectExercise onSelect={actions.selectExercise} />
                     }
                 />
+                <Route path="/history" element={<History />} />
             </Routes>
         </BrowserRouter>
     );

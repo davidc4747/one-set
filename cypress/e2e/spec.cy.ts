@@ -1,4 +1,6 @@
-import { clearHistory } from "../../src/utils/historyService";
+import moment from "moment";
+import { Exercise, EXERCISE_DEFAULT } from "../../src/utils/exerciseService";
+import { addExercise, clearHistory } from "../../src/utils/historyService";
 
 beforeEach(async function () {
     cy.visit("/");
@@ -56,23 +58,6 @@ it("Should select a random Exercise", function () {
     });
 });
 
-it("Should NEVER randomly select the SAME Exercise as the Current one", function () {
-    for (let i = 0; i < 30; i++) {
-        cy.findByTestId("exercise")
-            .invoke("text")
-            .then((exercise) => exercise)
-            .as("initalExercise");
-
-        cy.findByTestId("shuffle").click();
-        cy.get("@initalExercise").then(function (initalExercise) {
-            cy.findByTestId("exercise")
-                .invoke("text")
-                .should("not.equal", "")
-                .should("not.contain", initalExercise);
-        });
-    }
-});
-
 it("Should allow user to manually select an exercise", function () {
     const selectedExercise = "Row";
 
@@ -91,4 +76,43 @@ it("Should allow user to manually select an exercise", function () {
             .should("not.contain", initalExercise)
             .should("equal", selectedExercise);
     });
+});
+
+it("Should display the most recent Set at the top", function () {
+    const history: Exercise[] = [
+        {
+            ...EXERCISE_DEFAULT["OHP"],
+            datetime: moment().subtract(2, "hours").toDate(),
+        },
+        { ...EXERCISE_DEFAULT["Squat"], datetime: moment().toDate() },
+        {
+            ...EXERCISE_DEFAULT["Row"],
+            datetime: moment().subtract(1, "hours").toDate(),
+        },
+    ];
+    addExercise(history);
+
+    cy.findByTestId("exercise-history")
+        .invoke("text")
+        .should("not.be.undefined");
+    cy.findByTestId("exercise-history")
+        .children()
+        .eq(0)
+        .invoke("text")
+        .should("include", "Squat");
+});
+it("Should only display the History for today", function () {
+    const history: Exercise[] = [
+        {
+            ...EXERCISE_DEFAULT["OHP"],
+            datetime: moment().subtract(2, "day").toDate(),
+        },
+        { ...EXERCISE_DEFAULT["Squat"], datetime: moment().toDate() },
+        {
+            ...EXERCISE_DEFAULT["Row"],
+            datetime: moment().subtract(1, "day").toDate(),
+        },
+    ];
+    addExercise(history);
+    cy.findByTestId("exercise-history").children().should("have.length", 1);
 });

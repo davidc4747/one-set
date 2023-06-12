@@ -1,9 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-    getHistory,
-    addExercise,
-    clearHistory,
-} from "../../utils/historyService";
+import { addExercise } from "../../utils/historyService";
 import {
     Exercise,
     getNextExercise,
@@ -16,12 +12,10 @@ import {
 
 export interface Model {
     currExercise: Exercise | null;
-    history: Exercise[];
 }
 
 const initalModel: Model = {
     currExercise: null,
-    history: [],
 };
 
 /* ======================== *\
@@ -43,7 +37,6 @@ export function useAppModel() {
                 setModel({
                     ...initalModel,
                     currExercise: await getNextExercise(),
-                    history: await getHistory(),
                 });
             })();
         },
@@ -89,11 +82,7 @@ export function useAppModel() {
                 // Update Model
                 setModel({
                     ...model,
-
                     currExercise: await getNextExercise(),
-
-                    // Add to exercise history
-                    history: await getHistory(),
                 });
             }
         },
@@ -104,12 +93,12 @@ export function useAppModel() {
             });
         },
         async shuffleExercise() {
+            // randomly select and exercise that's not the same as the current one
             const randomExercise = await getRandomExercise(
-                // randomly select and exercise that's not the same as the current one
-                model.currExercise ? [model.currExercise.name] : []
+                model.currExercise?.name ?? []
             );
 
-            // If it can't find an exersice to select, do nothing.
+            // If it can't find a random exercise to select, do nothing.
             if (randomExercise) {
                 setModel({
                     ...model,
@@ -117,17 +106,16 @@ export function useAppModel() {
                 });
             }
         },
-        async clearHistory(): Promise<void> {
-            // Update Exercie History in DB
-            await clearHistory();
+        // async clearHistory(): Promise<void> {
+        //     // Update Exercie History in DB
+        //     await clearHistory();
 
-            // Update Model
-            setModel({
-                ...model,
-                // If history change, the currentExercise does to
-                currExercise: await getNextExercise(),
-                history: [],
-            });
-        },
+        //     // Update Model
+        //     setModel({
+        //         ...model,
+        //         // If history change, the currentExercise does to
+        //         currExercise: await getNextExercise(),
+        //     });
+        // },
     };
 }

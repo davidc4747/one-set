@@ -8,7 +8,6 @@
     },
     "scripts": {
         "start": "vite",
-        "dev": "vite",
         "build": "vite build",
         "test": "vitest watch",
         "lint": "eslint src/**/*.{js,jsx,ts,tsx}",

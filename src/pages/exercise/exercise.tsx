@@ -1,5 +1,7 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Exercise } from "../../utils/exerciseService";
+import { getHistoryForToday } from "../../utils/historyService";
 
 /* ===================== *\
     # Exercise
@@ -7,22 +9,38 @@ import { Exercise } from "../../utils/exerciseService";
 
 interface PropTypes {
     currExercise: Exercise | null;
-    history: Exercise[];
-    completeSet: () => void;
-    increaseWeight: () => void;
-    decreaseWeight: () => void;
-    shuffleExercise: () => void;
+    onSetCompleted(): void;
+    increaseWeight(): void;
+    decreaseWeight(): void;
+    shuffleExercise(): void;
 }
 
 export default function Exercise(props: PropTypes): React.ReactElement {
     const {
         currExercise,
-        history,
-        completeSet,
+        onSetCompleted,
         increaseWeight,
         decreaseWeight,
         shuffleExercise,
     } = props;
+
+    // Get the history Data from the DB
+    const [history, setHistory] = useState<Exercise[]>([]);
+    useEffect(function () {
+        (async function init() {
+            setHistory(await getHistoryForToday());
+        })();
+    }, []);
+
+    async function handleSetCompleted(): Promise<void> {
+        if (currExercise) {
+            onSetCompleted();
+
+            // Update exercise history
+            setHistory(await getHistoryForToday());
+        }
+    }
+
     return (
         <>
             <header className="grid grid-cols-2 grid-row-2 gap-md">
@@ -32,7 +50,7 @@ export default function Exercise(props: PropTypes): React.ReactElement {
                             currExercise?.name ?? "Exercise"
                         } Set`}
                         data-testid="complete-set"
-                        onClick={completeSet}
+                        onClick={handleSetCompleted}
                     >
                         ☑️
                     </button>

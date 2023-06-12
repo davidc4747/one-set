@@ -7,12 +7,12 @@ import { useEffect, useState } from "react";
 \* ===================== */
 
 interface PropTypes {
-    select: (exercise: Exercise) => void;
+    onSelect: (exercise: Exercise) => void;
 }
 
-export default function SelectExercise(props: PropTypes): React.ReactElement {
-    const { select } = props;
-
+export default function SelectExercise({
+    onSelect,
+}: PropTypes): React.ReactElement {
     const [available, setAvailable] = useState<Exercise[]>([]);
     useEffect(
         function () {
@@ -33,7 +33,7 @@ export default function SelectExercise(props: PropTypes): React.ReactElement {
                     <Link
                         to="/"
                         key={exercise.name}
-                        onClick={() => select(exercise)}
+                        onClick={() => onSelect(exercise)}
                         className="bg-primary-500 text-gray-200 text-center shadow p-lg rounded hover:bg-primary-900 hover:text-white hover:scale-105"
                     >
                         <h5 className="text-lg">{exercise.name}</h5>

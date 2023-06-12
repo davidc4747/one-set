@@ -1,3 +1,4 @@
+import moment from "moment";
 import { getAll, add, clear } from "./dataservice";
 import { Exercise, ExerciseType } from "./exerciseService";
 
@@ -14,6 +15,11 @@ export async function getHistory(sortAscending = true): Promise<Exercise[]> {
     } else {
         return history.sort((a, b) => Number(b.datetime) - Number(a.datetime));
     }
+}
+
+export async function getHistoryForToday(): Promise<Exercise[]> {
+    const history = await getHistory(false);
+    return history.filter((ex) => moment(ex.datetime).isSame(moment(), "day"));
 }
 
 export async function getHistoryForExercise(

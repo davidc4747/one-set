@@ -1,18 +1,14 @@
+import { useState, useEffect } from "react";
 import moment from "moment";
 import { Link } from "react-router-dom";
 import { Exercise } from "../../utils/exerciseService";
+import { getHistory, clearHistory } from "../../utils/historyService";
 
 /* ===================== *\
     # History
 \* ===================== */
 
-interface PropTypes {
-    history: Exercise[];
-    clearHistory: () => Promise<void>;
-}
-
-export default function History(props: PropTypes): React.ReactElement {
-    const { history, clearHistory } = props;
+export default function History(): React.ReactElement {
     const dateFormat = {
         sameDay: "[Today]",
         lastDay: "[Yesterday]",
@@ -25,6 +21,19 @@ export default function History(props: PropTypes): React.ReactElement {
             }
         },
     };
+
+    // Get the history Data from the DB
+    const [history, setHistory] = useState<Exercise[]>([]);
+    useEffect(function () {
+        (async function init() {
+            setHistory(await getHistory());
+        })();
+    }, []);
+
+    async function handleClear() {
+        await clearHistory();
+        setHistory([]);
+    }
 
     return (
         <main className="flex flex-col gap-lg">
@@ -57,7 +66,7 @@ export default function History(props: PropTypes): React.ReactElement {
                 ))}
             </ul>
 
-            <button onClick={clearHistory}>Clear History</button>
+            <button onClick={handleClear}>Clear History</button>
         </main>
     );
 }
