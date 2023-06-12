@@ -1,4 +1,5 @@
 import { getHistory, getHistoryForExercise } from "./historyService";
+export { addExercise } from "./historyService";
 
 export const ALL_EXERCISES = [
     "Squat",
@@ -71,8 +72,9 @@ export async function getNextExercise(): Promise<Exercise> {
 }
 
 export async function getRandomExercise(
-    exclude: ExerciseType[] = []
+    exclude: ExerciseType | ExerciseType[]
 ): Promise<Exercise | null> {
+    exclude = Array.isArray(exclude) ? exclude : [exclude];
     const available = await getAvailableExercieTypes();
     const exercises = available.filter((name) => !exclude.includes(name));
     if (exercises.length > 0) {
@@ -129,12 +131,19 @@ async function getNextExerciseByName(
 
 async function getAvailableExercieTypes() {
     const exerciseOrder = ALL_EXERCISES.slice(); // Clone the Array
-    const numOfSets = ALL_EXERCISES.reduce(function (acc, exercise) {
-        return {
-            ...acc,
-            [exercise]: 0,
-        };
-    }, {});
+
+    // TODO: I should be initalizing this as 0 inside the next chunk of code.
+    //          There's a way to simplif this, but i can do it NOW. Unless i'm sure I have tests for this funciton
+    //          This isn't a Type problem. this is a code problem
+    const numOfSets: Record<ExerciseType, number> = ALL_EXERCISES.reduce(
+        function (acc, exercise) {
+            return {
+                ...acc,
+                [exercise]: 0,
+            };
+        },
+        {}
+    );
     let availableExercies = new Set<ExerciseType>(exerciseOrder);
     const history = await getHistory();
     history.forEach(function (exercise) {

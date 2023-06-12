@@ -1,5 +1,11 @@
+import { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useAppModel } from "./useAppModel";
+import {
+    Exercise as ExerciseData,
+    getNextExercise,
+    getRandomExercise,
+    addExercise,
+} from "../../utils/exerciseService";
 import Exercise from "../exercise/exercise";
 import SelectExercise from "../selectExercise/selectExercise";
 import History from "../history/history";
@@ -9,7 +15,64 @@ import History from "../history/history";
 \* ===================== */
 
 export default function App(): React.ReactElement {
-    const { currExercise, ...actions } = useAppModel();
+    const [currExercise, setExercise] = useState<ExerciseData | null>(null);
+    useEffect(function () {
+        (async function () {
+            setExercise(await getNextExercise());
+        })();
+    }, []);
+
+    /* ------------------------- *\
+        #Actions
+    \* ------------------------- */
+
+    function increaseWeight(): void {
+        if (currExercise) {
+            setExercise({
+                ...currExercise,
+                weight: currExercise.weight + 5,
+            });
+        }
+    }
+    function decreaseWeight(): void {
+        if (currExercise) {
+            setExercise({
+                ...currExercise,
+                weight: currExercise.weight - 5,
+            });
+        }
+    }
+    async function completeSet() {
+        if (currExercise) {
+            // Update Exercie History in DB
+            await addExercise({
+                ...currExercise,
+                datetime: new Date(),
+            });
+
+            // Update Model
+            setExercise(await getNextExercise());
+        }
+    }
+    function selectExercise(exercise: ExerciseData) {
+        setExercise(exercise);
+    }
+    async function shuffleExercise() {
+        // randomly select and exercise that's not the same as the current one
+        const randomExercise = await getRandomExercise(
+            currExercise?.name ?? []
+        );
+
+        // If it can't find a random exercise to select, do nothing.
+        if (randomExercise) {
+            setExercise(randomExercise);
+        }
+    }
+
+    /* ------------------------- *\
+        #Render
+    \* ------------------------- */
+
     return (
         <BrowserRouter>
             <Routes>
@@ -18,18 +81,16 @@ export default function App(): React.ReactElement {
                     element={
                         <Exercise
                             currExercise={currExercise}
-                            onSetCompleted={actions.completeSet}
-                            increaseWeight={actions.increaseWeight}
-                            decreaseWeight={actions.decreaseWeight}
-                            shuffleExercise={actions.shuffleExercise}
+                            onSetCompleted={completeSet}
+                            increaseWeight={increaseWeight}
+                            decreaseWeight={decreaseWeight}
+                            shuffleExercise={shuffleExercise}
                         />
                     }
                 />
                 <Route
                     path="/select"
-                    element={
-                        <SelectExercise onSelect={actions.selectExercise} />
-                    }
+                    element={<SelectExercise onSelect={selectExercise} />}
                 />
                 <Route path="/history" element={<History />} />
             </Routes>
