@@ -1,18 +1,28 @@
-import { Model, Actions } from "../app/useAppModel";
 import { Link } from "react-router-dom";
+import { Exercise } from "../../utils/exerciseService";
 
 /* ===================== *\
     # Exercise
 \* ===================== */
 
 interface PropTypes {
-    model: Model;
-    actions: Actions;
+    currExercise: Exercise | null;
+    history: Exercise[];
+    completeSet: () => void;
+    increaseWeight: () => void;
+    decreaseWeight: () => void;
+    shuffleExercise: () => void;
 }
 
 export default function Exercise(props: PropTypes): React.ReactElement {
-    const { model, actions } = props;
-    const { currExercise, exerciseHistory } = model;
+    const {
+        currExercise,
+        history,
+        completeSet,
+        increaseWeight,
+        decreaseWeight,
+        shuffleExercise,
+    } = props;
     return (
         <>
             <header className="grid grid-cols-2 grid-row-2 gap-md">
@@ -22,7 +32,7 @@ export default function Exercise(props: PropTypes): React.ReactElement {
                             currExercise?.name ?? "Exercise"
                         } Set`}
                         data-testid="complete-set"
-                        onClick={async () => await actions.completeSet()}
+                        onClick={completeSet}
                     >
                         ☑️
                     </button>
@@ -33,7 +43,7 @@ export default function Exercise(props: PropTypes): React.ReactElement {
                             currExercise?.name ?? "Exercise"
                         } Weight`}
                         data-testid="increase"
-                        onClick={() => actions.increaseWeight()}
+                        onClick={increaseWeight}
                     >
                         +
                     </button>
@@ -43,7 +53,7 @@ export default function Exercise(props: PropTypes): React.ReactElement {
                             currExercise?.name ?? "Exercise"
                         } Weight`}
                         data-testid="decrease"
-                        onClick={() => actions.decreaseWeight()}
+                        onClick={decreaseWeight}
                     >
                         -
                     </button>
@@ -55,14 +65,14 @@ export default function Exercise(props: PropTypes): React.ReactElement {
                 <button
                     aria-label="Select Random Exercise"
                     data-testid="shuffle"
-                    onClick={async () => await actions.shuffleExercise()}
+                    onClick={shuffleExercise}
                 >
                     Shuffle
                 </button>
             </header>
 
             <ul data-testid="exercise-history" className="mt-lg">
-                {exerciseHistory.map((exercise, index) => (
+                {history.map((exercise, index) => (
                     <li
                         key={index}
                         className="bg-primary-500 px-lg py-sm text-gray-400 cursor-default first:rounded-t-lg last:rounded-b-lg flex justify-between hover:bg-primary-900 hover:text-white"

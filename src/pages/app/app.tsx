@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useAppModel } from "./useAppModel";
 import Exercise from "../exercise/exercise";
 import SelectExercise from "../selectExercise/selectExercise";
@@ -9,13 +9,22 @@ import History from "../history/history";
 \* ===================== */
 
 export default function App(): React.ReactElement {
-    const { model, actions } = useAppModel();
+    const { currExercise, history, ...actions } = useAppModel();
     return (
         <BrowserRouter>
             <Routes>
                 <Route
                     path="/"
-                    element={<Exercise model={model} actions={actions} />}
+                    element={
+                        <Exercise
+                            currExercise={currExercise}
+                            history={history}
+                            completeSet={actions.completeSet}
+                            increaseWeight={actions.increaseWeight}
+                            decreaseWeight={actions.decreaseWeight}
+                            shuffleExercise={actions.shuffleExercise}
+                        />
+                    }
                 />
                 <Route
                     path="/select"
@@ -25,7 +34,7 @@ export default function App(): React.ReactElement {
                     path="/history"
                     element={
                         <History
-                            history={model.exerciseHistory}
+                            history={history}
                             clearHistory={actions.clearHistory}
                         />
                     }
