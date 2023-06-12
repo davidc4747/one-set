@@ -52,7 +52,7 @@ export async function put(
     data: any
 ): Promise<IDBValidKey> {
     const store = await getDBStore(storeName, "readwrite");
-    const req = store.put(data, key);
+    const req = store.put(data);
     return new Promise(function (resolve, reject) {
         req.onsuccess = () => {
             resolve(req.result);
@@ -98,7 +98,7 @@ export async function clear(storeName: Store): Promise<void> {
 
 function openDB(storeName: Store): Promise<IDBDatabase> {
     const DATABASE = "one-set";
-    const requestOpenDB = indexedDB.open(DATABASE);
+    const requestOpenDB = indexedDB.open(DATABASE, 2);
 
     return new Promise(function (resolve, reject) {
         requestOpenDB.onsuccess = function () {
@@ -109,9 +109,14 @@ function openDB(storeName: Store): Promise<IDBDatabase> {
             reject("Error loading Database");
         };
 
-        requestOpenDB.onupgradeneeded = function () {
+        requestOpenDB.onupgradeneeded = function (
+            event: IDBVersionChangeEvent
+        ) {
             const db = requestOpenDB.result;
-            db.createObjectStore(storeName, { autoIncrement: true });
+            db.createObjectStore(storeName, {
+                autoIncrement: true,
+                keyPath: "id",
+            });
         };
     });
 }

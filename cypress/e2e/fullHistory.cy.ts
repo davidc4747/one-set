@@ -51,18 +51,6 @@ it("Should display full history", function () {
     cy.findAllByTestId("history-item").should("have.length", 10);
 });
 
-it("Should clear exercise history", function () {
-    const history: Exercise[] = [
-        EXERCISE_DEFAULT["Squat"],
-        EXERCISE_DEFAULT["Squat"],
-    ];
-    addExercise(history);
-
-    cy.findAllByTestId("history-item").should("have.length", history.length);
-    cy.contains(/clear/gi).click();
-    cy.findAllByTestId("history-item").should("have.length", 0);
-});
-
 it("Should sort history in descending order", function () {
     const history: Exercise[] = [
         {
@@ -79,4 +67,18 @@ it("Should sort history in descending order", function () {
 
     cy.findAllByTestId("history-group").should("have.length", 3);
     cy.findAllByTestId("history-item").should("have.length", history.length);
+});
+
+it("Should allow user to remove individual Items form history", function () {
+    const ex = EXERCISE_DEFAULT["Squat"];
+    const history: Exercise[] = [
+        { ...ex, datetime: moment().toDate() },
+        { ...ex, datetime: moment().toDate() },
+        { ...ex, datetime: moment().toDate() },
+        { ...ex, datetime: moment().toDate() },
+    ];
+    addExercise(history);
+    cy.findByTestId("remove").click();
+    cy.findAllByTestId("history-item").should("have.length", 1);
+    cy.findAllByTestId("history-item").invoke("text").should("include", "3x");
 });

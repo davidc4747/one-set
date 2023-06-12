@@ -1,5 +1,5 @@
 import { getHistory, getHistoryForExercise } from "./historyService";
-export { addExercise } from "./historyService";
+export { addExercise, removeExercise } from "./historyService";
 
 export const ALL_EXERCISES = [
     "Squat",
@@ -14,6 +14,7 @@ export const ALL_EXERCISES = [
 export type ExerciseType = (typeof ALL_EXERCISES)[number];
 
 export interface Exercise {
+    id?: IDBValidKey;
     name: ExerciseType;
     set: number;
     weight: number;
@@ -22,7 +23,7 @@ export interface Exercise {
 
 export const WEIGHT_INCREMENTS = 5;
 
-export const EXERCISE_DEFAULT = {
+export const EXERCISE_DEFAULT: Record<ExerciseType, Exercise> = {
     Squat: {
         name: "Squat",
         datetime: new Date(),

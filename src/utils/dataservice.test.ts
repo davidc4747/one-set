@@ -1,11 +1,12 @@
 import "fake-indexeddb/auto";
 import { test, expect } from "vitest";
 import { get, getAll, add, put, remove, clear } from "./dataservice";
+import { Exercise } from "./exerciseService";
 
 const STORE = "exerciseHistory";
 
 test("Should change the data", async function () {
-    const testExercise = {
+    const testExercise: Exercise = {
         name: "Squat",
         datetime: new Date(),
         set: 2,
@@ -18,10 +19,11 @@ test("Should change the data", async function () {
 
     // Select
     const val = await get(STORE, key);
-    expect(val).toEqual(testExercise);
+    expect(val).toEqual({ ...testExercise, id: key });
 
     // Update
-    const newExercise = {
+    const newExercise: Exercise = {
+        id: key,
         name: "OHP",
         datetime: new Date(),
         set: 8,
@@ -32,27 +34,30 @@ test("Should change the data", async function () {
     const newVal = await get(STORE, key);
     expect(newVal).toEqual(newExercise);
 
-    // delete
+    // Delete
     await remove(STORE, key);
     const delval = await get(STORE, key);
     expect(delval).toBeUndefined();
 });
 
 test("Should get and clear the full datastore", async function () {
-    const testExerciseList = [
+    const testExerciseList: Exercise[] = [
         {
+            id: 1,
             name: "Squat",
             datetime: new Date(),
             set: 2,
             weight: 100,
         },
         {
+            id: 2,
             name: "Deadlift",
             datetime: new Date(),
             set: 2,
             weight: 100,
         },
         {
+            id: 3,
             name: "Row",
             datetime: new Date(),
             set: 2,

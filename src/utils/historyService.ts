@@ -1,5 +1,5 @@
 import moment from "moment";
-import { getAll, add, clear } from "./dataservice";
+import { getAll, add, remove, clear } from "./dataservice";
 import { Exercise, ExerciseType } from "./exerciseService";
 
 const HISTORY_STORE = "exerciseHistory";
@@ -9,7 +9,7 @@ const HISTORY_STORE = "exerciseHistory";
 \* ======================== */
 
 export async function getHistory(sortAscending = true): Promise<Exercise[]> {
-    const history = await getAll(HISTORY_STORE);
+    const history: Exercise[] = await getAll(HISTORY_STORE);
     if (sortAscending) {
         return history.sort((a, b) => Number(a.datetime) - Number(b.datetime));
     } else {
@@ -61,6 +61,17 @@ export async function addExercise(
     } else {
         return await add(HISTORY_STORE, data);
     }
+}
+
+export async function removeExercise(
+    data: Exercise | Exercise[]
+): Promise<void> {
+    data = Array.isArray(data) ? data : [data];
+    await Promise.all(
+        data.map(async (item) => {
+            if (item.id !== undefined) await remove(HISTORY_STORE, item.id);
+        })
+    );
 }
 
 export async function clearHistory(): Promise<void> {

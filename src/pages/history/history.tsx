@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import moment from "moment";
 import { Link } from "react-router-dom";
-import { Exercise } from "../../utils/exerciseService";
-import { getHistoryByDate, clearHistory } from "../../utils/historyService";
+import { Exercise, removeExercise } from "../../utils/exerciseService";
+import { getHistoryByDate } from "../../utils/historyService";
 
 /* ===================== *\
     # History
@@ -33,9 +33,10 @@ export default function History(): React.ReactElement {
         })();
     }, []);
 
-    async function handleClear() {
-        await clearHistory();
-        setHistory([]);
+    async function handleRemove(exercise: Exercise) {
+        await removeExercise(exercise);
+        const historyGroups = await getHistoryByDate();
+        setHistory(Array.from(historyGroups));
     }
 
     return (
@@ -64,19 +65,24 @@ export default function History(): React.ReactElement {
                             <li
                                 key={index}
                                 data-testid="history-item"
-                                className="bg-primary-500 text-gray-400 p-lg text-lg cursor-default first:rounded-t-lg last:rounded-b-lg flex justify-between hover:bg-primary-900 hover:text-white"
+                                className="flex gap-md items-center bg-primary-500 text-gray-400 p-lg text-lg cursor-default first:rounded-t-lg last:rounded-b-lg hover:bg-primary-900 hover:text-white"
                             >
-                                <span>{exercise.name}</span>
+                                <span className="mr-auto">{exercise.name}</span>
                                 <span>
                                     {exercise.set}x{exercise.weight}lbs
                                 </span>
+                                <button
+                                    aria-label="Delete from history"
+                                    data-testid="remove"
+                                    onClick={() => handleRemove(exercise)}
+                                >
+                                    ❌
+                                </button>
                             </li>
                         ))}
                     </ul>
                 </div>
             ))}
-
-            <button onClick={handleClear}>Clear History</button>
         </main>
     );
 }
