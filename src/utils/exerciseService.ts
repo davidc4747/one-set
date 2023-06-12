@@ -20,6 +20,8 @@ export interface Exercise {
     datetime: Date;
 }
 
+export const WEIGHT_INCREMENTS = 5;
+
 export const EXERCISE_DEFAULT = {
     Squat: {
         name: "Squat",

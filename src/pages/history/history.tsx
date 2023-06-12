@@ -66,14 +66,6 @@ export default function History(): React.ReactElement {
                                 data-testid="history-item"
                                 className="bg-primary-500 text-gray-400 p-lg text-lg cursor-default first:rounded-t-lg last:rounded-b-lg flex justify-between hover:bg-primary-900 hover:text-white"
                             >
-                                {!moment(exercise.datetime).isSame(
-                                    Date.now(),
-                                    "month"
-                                ) && (
-                                    <span>
-                                        {moment(exercise.datetime).fromNow()}
-                                    </span>
-                                )}
                                 <span>{exercise.name}</span>
                                 <span>
                                     {exercise.set}x{exercise.weight}lbs

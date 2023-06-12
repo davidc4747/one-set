@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import {
+    WEIGHT_INCREMENTS,
     Exercise as ExerciseData,
     getNextExercise,
     getRandomExercise,
@@ -30,7 +31,7 @@ export default function App(): React.ReactElement {
         if (currExercise) {
             setExercise({
                 ...currExercise,
-                weight: currExercise.weight + 5,
+                weight: currExercise.weight + WEIGHT_INCREMENTS,
             });
         }
     }
@@ -38,7 +39,7 @@ export default function App(): React.ReactElement {
         if (currExercise) {
             setExercise({
                 ...currExercise,
-                weight: currExercise.weight - 5,
+                weight: currExercise.weight - WEIGHT_INCREMENTS,
             });
         }
     }
