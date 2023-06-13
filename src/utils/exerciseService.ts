@@ -1,25 +1,7 @@
 import { getHistory, getHistoryForExercise } from "./historyService";
 export { addExercise, removeExercise } from "./historyService";
-
-export const ALL_EXERCISES = [
-    "Squat",
-    "OHP",
-    "Deadlift",
-    "Bench press",
-    "Row",
-    "Calf Raises",
-    "Ab workout",
-] as const;
-
-export type ExerciseType = (typeof ALL_EXERCISES)[number];
-
-export interface Exercise {
-    id?: IDBValidKey;
-    name: ExerciseType;
-    set: number;
-    weight: number;
-    datetime: Date;
-}
+import { Exercise, ExerciseType, ALL_EXERCISES } from "./dataservice";
+export { Exercise, ExerciseType, ALL_EXERCISES };
 
 export const WEIGHT_INCREMENTS = 5;
 

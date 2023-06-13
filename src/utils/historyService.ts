@@ -2,14 +2,12 @@ import moment from "moment";
 import { getAll, add, remove, clear } from "./dataservice";
 import { Exercise, ExerciseType } from "./exerciseService";
 
-const HISTORY_STORE = "exerciseHistory";
-
 /* ======================== *\
     #Read
 \* ======================== */
 
 export async function getHistory(sortAscending = true): Promise<Exercise[]> {
-    const history: Exercise[] = await getAll(HISTORY_STORE);
+    const history: Exercise[] = await getAll();
     if (sortAscending) {
         return history.sort((a, b) => Number(a.datetime) - Number(b.datetime));
     } else {
@@ -55,11 +53,9 @@ export async function addExercise(
     data: Exercise | Exercise[]
 ): Promise<IDBValidKey> {
     if (Array.isArray(data)) {
-        return Promise.all(
-            data.map(async (item) => await add(HISTORY_STORE, item))
-        );
+        return Promise.all(data.map(async (item) => await add(item)));
     } else {
-        return await add(HISTORY_STORE, data);
+        return await add(data);
     }
 }
 
@@ -69,13 +65,13 @@ export async function removeExercise(
     data = Array.isArray(data) ? data : [data];
     await Promise.all(
         data.map(async (item) => {
-            if (item.id !== undefined) await remove(HISTORY_STORE, item.id);
+            if (item.id !== undefined) await remove(item.id);
         })
     );
 }
 
 export async function clearHistory(): Promise<void> {
-    return await clear(HISTORY_STORE);
+    return await clear();
 }
 
 /* ======================== *\

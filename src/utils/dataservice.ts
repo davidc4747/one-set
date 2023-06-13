@@ -1,132 +1,102 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import { IDBPDatabase, openDB } from "idb";
+
+export const ALL_EXERCISES = [
+    "Squat",
+    "OHP",
+    "Deadlift",
+    "Bench press",
+    "Row",
+    "Calf Raises",
+    "Ab workout",
+] as const;
+
+export type ExerciseType = (typeof ALL_EXERCISES)[number];
+
+export interface Exercise {
+    id?: IDBValidKey;
+    name: ExerciseType;
+    set: number;
+    weight: number;
+    datetime: Date;
+}
+
+// type DraftExercise = Omit<Exercise, "id"> & Partial<Pick<Exercise, "id">>;
 
 /* ======================== *\
     #Data Service
 \* ======================== */
 
-let db: IDBDatabase | null = null;
-type Store = "exerciseHistory";
-
-export async function get(storeName: Store, key: IDBValidKey): Promise<any> {
-    const store = await getDBStore(storeName);
-    const req = store.get(key);
-    return new Promise(function (resolve, reject) {
-        req.onsuccess = () => {
-            resolve(req.result);
-        };
-        req.onerror = () => {
-            reject(`Error getting ${key}`);
-        };
-    });
+export async function get(key: IDBValidKey): Promise<Exercise> {
+    const store = await getDBStore();
+    const exercise = await store.get(key);
+    return exercise;
 }
 
-export async function getAll(storeName: Store): Promise<any[]> {
-    const store = await getDBStore(storeName);
-    const req = store.getAll();
-    return new Promise(function (resolve, reject) {
-        req.onsuccess = () => {
-            resolve(req.result);
-        };
-        req.onerror = () => {
-            reject(`Error getting All entries`);
-        };
-    });
+export async function getAll(): Promise<Exercise[]> {
+    const store = await getDBStore();
+    if (store.getAll) {
+        return await store.getAll();
+    } else {
+        console.error(`Error getting All entries`);
+        return [];
+    }
 }
 
-export async function add(storeName: Store, data: any): Promise<IDBValidKey> {
-    const store = await getDBStore(storeName, "readwrite");
-    const req = store.add(data);
-    return new Promise(function (resolve, reject) {
-        req.onsuccess = () => {
-            resolve(req.result);
-        };
-        req.onerror = () => {
-            reject("Error adding data:" + JSON.stringify(data));
-        };
-    });
+export async function add(data: Exercise | Exercise[]): Promise<IDBValidKey> {
+    const store = await getDBStore("readwrite");
+    if (store.add) {
+        return await store.add(data);
+    } else {
+        console.error(`Error adding data:${JSON.stringify(data)}`);
+        return -1;
+    }
 }
 
-export async function put(
-    storeName: Store,
-    key: IDBValidKey,
-    data: any
-): Promise<IDBValidKey> {
-    const store = await getDBStore(storeName, "readwrite");
-    const req = store.put(data);
-    return new Promise(function (resolve, reject) {
-        req.onsuccess = () => {
-            resolve(req.result);
-        };
-        req.onerror = () => {
-            reject("Error updating data:" + JSON.stringify(data));
-        };
-    });
+export async function put(data: Exercise): Promise<IDBValidKey> {
+    const store = await getDBStore("readwrite");
+    if (store.put) {
+        return await store.put(data);
+    } else {
+        console.error(`Error updating data:${JSON.stringify(data)}`);
+        return -1;
+    }
 }
 
-export async function remove(
-    storeName: Store,
-    key: IDBValidKey
-): Promise<void> {
-    const store = await getDBStore(storeName, "readwrite");
-    const req = store.delete(key);
-    return new Promise(function (resolve, reject) {
-        req.onsuccess = () => {
-            resolve();
-        };
-        req.onerror = () => {
-            reject("Error deleting data:");
-        };
-    });
+export async function remove(key: IDBValidKey): Promise<void> {
+    const store = await getDBStore("readwrite");
+    if (store.delete) {
+        await store.delete(key);
+    } else {
+        console.error(`Error deleting data: ${JSON.stringify(key)}`);
+    }
 }
 
-export async function clear(storeName: Store): Promise<void> {
-    const store = await getDBStore(storeName, "readwrite");
-    const req = store.clear();
-    return new Promise(function (resolve, reject) {
-        req.onsuccess = () => {
-            resolve();
-        };
-        req.onerror = () => {
-            reject(`Error getting All entries`);
-        };
-    });
+export async function clear(): Promise<void> {
+    const store = await getDBStore("readwrite");
+    if (store.clear) {
+        await store.clear();
+    } else {
+        console.error(`Error clearing store`);
+    }
 }
 
 /* ======================== *\
     #Helpers
 \* ======================== */
 
-function openDB(storeName: Store): Promise<IDBDatabase> {
+let db: IDBPDatabase<Exercise> | null = null;
+async function getDBStore(mode: IDBTransactionMode = "readonly") {
     const DATABASE = "one-set";
-    const requestOpenDB = indexedDB.open(DATABASE, 2);
-
-    return new Promise(function (resolve, reject) {
-        requestOpenDB.onsuccess = function () {
-            resolve(requestOpenDB.result);
-        };
-
-        requestOpenDB.onerror = function () {
-            reject("Error loading Database");
-        };
-
-        requestOpenDB.onupgradeneeded = function (
-            event: IDBVersionChangeEvent
-        ) {
-            const db = requestOpenDB.result;
-            db.createObjectStore(storeName, {
-                autoIncrement: true,
-                keyPath: "id",
-            });
-        };
-    });
-}
-
-async function getDBStore(
-    storeName: Store,
-    mode: IDBTransactionMode = "readonly"
-) {
+    const STORE = "exerciseHistory";
     if (!db) {
-        db = await openDB(storeName);
+        db = await openDB(DATABASE, 2, {
+            upgrade(db: IDBPDatabase<Exercise>) {
+                db.createObjectStore(STORE, {
+                    autoIncrement: true,
+                    keyPath: "id",
+                });
+            },
+        });
     }
-    return db.transaction(storeName, mode).objectStore(storeName);
+    return db.transaction(STORE, mode).objectStore(STORE);
 }

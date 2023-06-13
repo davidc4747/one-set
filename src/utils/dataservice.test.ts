@@ -1,11 +1,8 @@
 import "fake-indexeddb/auto";
 import { test, expect } from "vitest";
-import { get, getAll, add, put, remove, clear } from "./dataservice";
-import { Exercise } from "./exerciseService";
+import { Exercise, get, getAll, add, put, remove, clear } from "./dataservice";
 
-const STORE = "exerciseHistory";
-
-test("Should change the data", async function () {
+test.only("Should change the data", async function () {
     const testExercise: Exercise = {
         name: "Squat",
         datetime: new Date(),
@@ -14,11 +11,11 @@ test("Should change the data", async function () {
     };
 
     // Insert
-    const key = await add(STORE, testExercise);
+    const key = await add(testExercise);
     expect(key).toBe(1);
 
     // Select
-    const val = await get(STORE, key);
+    const val = await get(key);
     expect(val).toEqual({ ...testExercise, id: key });
 
     // Update
@@ -29,14 +26,14 @@ test("Should change the data", async function () {
         set: 8,
         weight: 200,
     };
-    const putid = await put(STORE, key, newExercise);
+    const putid = await put(newExercise);
     expect(putid).toBe(key);
-    const newVal = await get(STORE, key);
+    const newVal = await get(key);
     expect(newVal).toEqual(newExercise);
 
     // Delete
-    await remove(STORE, key);
-    const delval = await get(STORE, key);
+    await remove(key);
+    const delval = await get(key);
     expect(delval).toBeUndefined();
 });
 
@@ -66,16 +63,14 @@ test("Should get and clear the full datastore", async function () {
     ];
 
     // Insert a bunch
-    for (const ex of testExerciseList) {
-        await add(STORE, ex);
-    }
+    await add(testExerciseList);
 
     // Select *
-    const val = await getAll(STORE);
+    const val = await getAll();
     expect(val).toEqual(testExerciseList);
 
     // Clear
-    await clear(STORE);
-    const clearVal = await getAll(STORE);
+    await clear();
+    const clearVal = await getAll();
     expect(clearVal).toEqual([]);
 });
