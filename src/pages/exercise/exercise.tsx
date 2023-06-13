@@ -98,7 +98,7 @@ export default function Exercise(props: PropTypes): React.ReactElement {
                 {history.map((exercise, index) => (
                     <li
                         key={index}
-                        className="bg-primary-500 text-gray-400 p-lg text-lg cursor-default first:rounded-t-lg last:rounded-b-lg flex justify-between hover:bg-primary-900 hover:text-white"
+                        className="bg-primary-500 text-black p-lg text-lg cursor-default first:rounded-t-lg last:rounded-b-lg flex justify-between hover:bg-primary-700 hover:text-black"
                     >
                         <span>{exercise.name}</span>
                         <span>

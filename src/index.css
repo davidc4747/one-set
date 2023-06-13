@@ -7,7 +7,7 @@
 body {
     @apply font-sans
         bg-background
-        text-white
+        text-black
         mx-auto
         p-lg
         max-w-2xl;
@@ -44,11 +44,10 @@ button {
 .btn {
     @apply block
         bg-primary-500 
-        text-gray-200 
+        text-black
         text-center
         uppercase
         font-bold
-        shadow
         px-lg 
         py-xs 
         rounded
@@ -58,8 +57,9 @@ button {
         ease-out
         duration-200;
 }
-.btn:hover {
-    @apply bg-primary-900 text-white border-white;
+.btn:hover,
+.btn:focus {
+    @apply bg-primary-700 border-black text-black;
 }
 
 /* ======================== *\
@@ -67,10 +67,7 @@ button {
 \* ======================== */
 
 .link {
-    @apply text-white underline transition ease-out duration-200;
-}
-.link:hover {
-    @apply text-gray-400;
+    @apply text-black underline transition ease-out duration-200;
 }
 
 @tailwind utilities;

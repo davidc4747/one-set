@@ -48,7 +48,7 @@ export default function History(): React.ReactElement {
             {/* Not Found Message */}
             {history.length === 0 && (
                 <ul data-testid="history-not-found">
-                    <li className="bg-primary-500 text-gray-400 px-lg py-sm cursor-default rounded-lg">
+                    <li className="bg-primary-500 text-black px-lg py-sm cursor-default rounded-lg">
                         No Exercises Found :(
                     </li>
                 </ul>
@@ -57,7 +57,7 @@ export default function History(): React.ReactElement {
             {/* Display hsitory items */}
             {history.map(([date, exerciseList]) => (
                 <div key={date}>
-                    <h1 className="mt-md mb-sm">
+                    <h1 className="mt-md mb-sm text-white">
                         {moment(date).calendar(dateFormat)}
                     </h1>
                     <ul data-testid="history-group">
@@ -65,7 +65,7 @@ export default function History(): React.ReactElement {
                             <li
                                 key={index}
                                 data-testid="history-item"
-                                className="flex gap-md items-center bg-primary-500 text-gray-400 p-lg text-lg cursor-default first:rounded-t-lg last:rounded-b-lg hover:bg-primary-900 hover:text-white"
+                                className="flex gap-md items-center bg-primary-500 text-black p-lg text-lg cursor-default first:rounded-t-lg last:rounded-b-lg hover:bg-primary-700"
                             >
                                 <span className="mr-auto">{exercise.name}</span>
                                 <span>
