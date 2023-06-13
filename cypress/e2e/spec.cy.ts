@@ -16,9 +16,16 @@ beforeEach(function () {
 
 it("Should Add completed exercises to history", () => {
     cy.findByTestId("complete-set").click();
+    cy.findByTestId("complete-set").click();
+
     cy.findByTestId("exercise-history")
         .children()
         .should("have.length.above", 0);
+    cy.findAllByTestId("history-item").should("have.length", 1);
+    cy.findAllByTestId("history-item")
+        .eq(0)
+        .invoke("text")
+        .should("include", "2x50lbs");
 });
 
 it("Should Increment & Decrement Exercise Weight", function () {

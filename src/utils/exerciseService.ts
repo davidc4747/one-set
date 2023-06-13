@@ -148,17 +148,13 @@ async function getNextExerciseByName(
     if (mostRecent && setsAtCurrentWeight >= 9) {
         // If you've done more than 9 set, Bump the weight
         return {
-            name: exerciseName,
-            datetime: new Date(),
-            set: 1,
+            ...EXERCISE_DEFAULT[exerciseName],
             weight: mostRecent.weight + 5,
         };
     } else if (mostRecent && setsAtCurrentWeight < 9) {
         // Less than 9 set, Keep doing the same Weight
         return {
-            name: exerciseName,
-            datetime: new Date(),
-            set: mostRecent.set + 1,
+            ...EXERCISE_DEFAULT[exerciseName],
             weight: mostRecent.weight,
         };
     } else {

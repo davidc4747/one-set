@@ -95,9 +95,10 @@ export default function Exercise(props: PropTypes): React.ReactElement {
             </header>
 
             <ul data-testid="exercise-history" className="mt-lg">
-                {history.map((exercise, index) => (
+                {history.map((exercise) => (
                     <li
-                        key={index}
+                        key={exercise.id as number}
+                        data-testid="history-item"
                         className="bg-primary-500 text-black p-lg text-lg cursor-default first:rounded-t-lg last:rounded-b-lg flex justify-between hover:bg-primary-700 hover:text-black"
                     >
                         <span>{exercise.name}</span>

@@ -3,7 +3,7 @@ import { test, expect } from "vitest";
 import { get, getAll, add, put, remove, clear } from "./dataservice";
 import { Exercise } from "./exerciseService";
 
-test.only("Should change the data", async function () {
+test("Should change the data", async function () {
     const testExercise: Exercise = {
         name: "Squat",
         datetime: new Date(),
