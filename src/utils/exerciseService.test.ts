@@ -1,9 +1,11 @@
 import "fake-indexeddb/auto";
 import { test, expect, beforeEach } from "vitest";
-import { Exercise, ALL_EXERCISES } from "./exerciseService";
-import { addExercise, clearHistory } from "./historyService";
+import { clearHistory } from "./historyService";
 import {
+    Exercise,
     EXERCISE_DEFAULT,
+    ALL_EXERCISES,
+    addExercise,
     getAllAvailableExercies,
     getNextExercise,
 } from "./exerciseService";

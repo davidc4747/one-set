@@ -1,6 +1,10 @@
 import moment from "moment";
-import { Exercise, EXERCISE_DEFAULT } from "../../src/utils/exerciseService";
-import { addExercise, clearHistory } from "../../src/utils/historyService";
+import {
+    Exercise,
+    EXERCISE_DEFAULT,
+    addExercise,
+} from "../../src/utils/exerciseService";
+import { clearHistory } from "../../src/utils/historyService";
 
 beforeEach(function () {
     cy.visit("/");

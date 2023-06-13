@@ -1,6 +1,10 @@
 import moment from "moment";
-import { EXERCISE_DEFAULT, Exercise } from "../../src/utils/exerciseService";
-import { addExercise, clearHistory } from "../../src/utils/historyService";
+import {
+    EXERCISE_DEFAULT,
+    Exercise,
+    addExercise,
+} from "../../src/utils/exerciseService";
+import { clearHistory } from "../../src/utils/historyService";
 
 /* ======================== *\
     #Full History

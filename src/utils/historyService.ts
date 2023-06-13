@@ -1,5 +1,5 @@
 import moment from "moment";
-import { getAll, add, remove, clear } from "./dataservice";
+import { getAll, clear } from "./dataservice";
 import { Exercise, ExerciseType } from "./exerciseService";
 
 /* ======================== *\
@@ -48,27 +48,6 @@ export async function getHistoryByDate(): Promise<Map<string, Exercise[]>> {
 /* ======================== *\
     #Update
 \* ======================== */
-
-export async function addExercise(
-    data: Exercise | Exercise[]
-): Promise<IDBValidKey> {
-    if (Array.isArray(data)) {
-        return Promise.all(data.map(async (item) => await add(item)));
-    } else {
-        return await add(data);
-    }
-}
-
-export async function removeExercise(
-    data: Exercise | Exercise[]
-): Promise<void> {
-    data = Array.isArray(data) ? data : [data];
-    await Promise.all(
-        data.map(async (item) => {
-            if (item.id !== undefined) await remove(item.id);
-        })
-    );
-}
 
 export async function clearHistory(): Promise<void> {
     return await clear();

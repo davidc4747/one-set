@@ -1,7 +1,26 @@
 import { getHistory, getHistoryForExercise } from "./historyService";
-export { addExercise, removeExercise } from "./historyService";
-import { Exercise, ExerciseType, ALL_EXERCISES } from "./dataservice";
-export { Exercise, ExerciseType, ALL_EXERCISES };
+import { add, remove } from "./dataservice";
+
+export const ALL_EXERCISES = [
+    "Squat",
+    "OHP",
+    "Deadlift",
+    "Bench press",
+    "Row",
+    "Calf Raises",
+    "Ab workout",
+] as const;
+
+export type ExerciseType = (typeof ALL_EXERCISES)[number];
+
+export interface Exercise {
+    id?: IDBValidKey;
+    name: ExerciseType;
+    set: number;
+    weight: number;
+    datetime: Date;
+}
+// type DraftExercise = Omit<Exercise, "id"> & Partial<Pick<Exercise, "id">>;
 
 export const WEIGHT_INCREMENTS = 5;
 
@@ -49,6 +68,40 @@ export const EXERCISE_DEFAULT: Record<ExerciseType, Exercise> = {
         weight: 10,
     },
 } as const;
+
+/* ======================== *\
+    #Update
+\* ======================== */
+
+export function addExercise(data: Exercise): Promise<IDBValidKey>;
+export function addExercise(data: Exercise[]): Promise<IDBValidKey[]>;
+export async function addExercise(
+    data: Exercise | Exercise[]
+): Promise<IDBValidKey> {
+    if (Array.isArray(data)) {
+        return Promise.all(data.map((d) => add(d)));
+    } else {
+        return add(data);
+    }
+}
+
+export async function removeExercise(
+    data: Exercise | Exercise[]
+): Promise<void> {
+    if (Array.isArray(data)) {
+        await Promise.all(
+            data.map(async (d) => {
+                if (d.id) await remove(d.id);
+            })
+        );
+    } else if (data.id) {
+        await remove(data.id);
+    }
+}
+
+/* ======================== *\
+    #Read
+\* ======================== */
 
 export async function getNextExercise(): Promise<Exercise> {
     const available = await getAvailableExercieTypes();

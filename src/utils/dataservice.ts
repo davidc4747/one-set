@@ -1,35 +1,13 @@
 import { IDBPDatabase, openDB } from "idb";
-
-export const ALL_EXERCISES = [
-    "Squat",
-    "OHP",
-    "Deadlift",
-    "Bench press",
-    "Row",
-    "Calf Raises",
-    "Ab workout",
-] as const;
-
-export type ExerciseType = (typeof ALL_EXERCISES)[number];
-
-export interface Exercise {
-    id?: IDBValidKey;
-    name: ExerciseType;
-    set: number;
-    weight: number;
-    datetime: Date;
-}
-
-// type DraftExercise = Omit<Exercise, "id"> & Partial<Pick<Exercise, "id">>;
+import { Exercise } from "./exerciseService";
 
 /* ======================== *\
     #Data Service
 \* ======================== */
 
-export async function get(key: IDBValidKey): Promise<Exercise> {
+export async function get(key: IDBValidKey | IDBKeyRange): Promise<Exercise> {
     const store = await getDBStore();
-    const exercise = await store.get(key);
-    return exercise;
+    return await store.get(key);
 }
 
 export async function getAll(): Promise<Exercise[]> {
@@ -41,13 +19,12 @@ export async function getAll(): Promise<Exercise[]> {
         return [];
     }
 }
-
-export async function add(data: Exercise | Exercise[]): Promise<IDBValidKey> {
+export async function add(data: Exercise): Promise<IDBValidKey> {
     const store = await getDBStore("readwrite");
     if (store.add) {
         return await store.add(data);
     } else {
-        console.error(`Error adding data:${JSON.stringify(data)}`);
+        console.error(`Error adding data: ${JSON.stringify(data)}`);
         return -1;
     }
 }
@@ -57,7 +34,7 @@ export async function put(data: Exercise): Promise<IDBValidKey> {
     if (store.put) {
         return await store.put(data);
     } else {
-        console.error(`Error updating data:${JSON.stringify(data)}`);
+        console.error(`Error updating data: ${JSON.stringify(data)}`);
         return -1;
     }
 }
@@ -67,7 +44,7 @@ export async function remove(key: IDBValidKey): Promise<void> {
     if (store.delete) {
         await store.delete(key);
     } else {
-        console.error(`Error deleting data: ${JSON.stringify(key)}`);
+        console.error(`Error adding data: ${JSON.stringify(key)}`);
     }
 }
 
@@ -90,7 +67,11 @@ async function getDBStore(mode: IDBTransactionMode = "readonly") {
     const STORE = "exerciseHistory";
     if (!db) {
         db = await openDB(DATABASE, 2, {
-            upgrade(db: IDBPDatabase<Exercise>) {
+            upgrade(db: IDBPDatabase<Exercise>, oldversion: number) {
+                if (oldversion === 1) {
+                    db.deleteObjectStore(STORE);
+                }
+
                 db.createObjectStore(STORE, {
                     autoIncrement: true,
                     keyPath: "id",
